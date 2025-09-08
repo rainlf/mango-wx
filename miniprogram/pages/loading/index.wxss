@@ -5,11 +5,8 @@
     align-items: center;
     justify-content: center;
     height: 100vh;
-    /* 设置背景图 */
-    background-image: url('/images/background.png');
-    background-size: cover; /* 让背景图覆盖整个容器 */
-    background-position: center; /* 背景图居中显示 */
-    background-repeat: no-repeat; /* 背景图不重复 */
+    /* 小程序中不支持通过WXSS引用本地资源图片作为背景图 */
+    background-color: #f5f5f5;
 }
 
 /* 进度条容器样式 */

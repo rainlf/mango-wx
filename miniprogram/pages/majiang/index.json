@@ -4,5 +4,7 @@
     "rank": "/components/rank/rank",
     "majiang-log": "/components/majiang-log/majiang-log",
     "majiang-game": "/components/majiang-game/majiang-game"
-  }
+  },
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark"
 }

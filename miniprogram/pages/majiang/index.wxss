@@ -1,37 +1,39 @@
+/* 页面整体布局 */
 page {
     height: 100vh;
     display: flex;
     flex-direction: column;
-    background-image: url('/images/background.png');
-    background-size: cover; /* 让背景图覆盖整个容器 */
-    background-position: center; /* 背景图居中显示 */
-    background-repeat: no-repeat; /* 背景图不重复 */
+    position: relative;
+    background-color: #f5f5f5;
 }
 
-.scrollarea {
-    flex: 1;
-    overflow-y: hidden;
-}
-
-/* 新增背景样式 */
 .container {
-    padding: 75px 0 0 0;
+    flex: 1;
+    padding: 75px 0 120px 0;
+    display: flex;
+    flex-direction: column;
+    position: relative;
 }
 
 .top-container {
     flex: 1;
     width: 100%;
-    overflow: hidden; /* 防止内容溢出 */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
+    min-height: 0; /* 解决flex布局中子元素高度计算问题 */
 }
 
 .bottom-container {
+    padding: 20rpx;
     padding-bottom: 60rpx;
     width: 100%;
     box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.05);
     display: flex;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background-color: #fff;
 }
 
 .game-container {
@@ -52,6 +54,8 @@ page {
 }
 
 .start-btn {
+    flex: 1;
+    margin-left: 20rpx;
     background: linear-gradient(135deg, #ffd700 0%, #ffb600 100%);
     box-shadow: 0 6rpx 18rpx rgba(255, 215, 0, 0.3);
     color: #fff;
@@ -63,6 +67,8 @@ page {
 }
 
 .history-btn {
+    flex: 1;
+    margin-right: 20rpx;
     background: linear-gradient(135deg, #4A90E2 0%, #0066CC 100%);
     box-shadow: 0 6rpx 18rpx rgba(74, 144, 226, 0.3);
     color: #fff;

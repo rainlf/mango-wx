@@ -3,8 +3,8 @@
         scroll-y
         refresher-enabled
         bindrefresherrefresh="onRefresh"
-        refresher-triggered="{{isRefreshing}}"
->
+        bindscrolltolower="onScrollToLower"
+        refresher-triggered="{{isRefreshing}}">
     <view class="list-content">
         <block wx:for="{{listData}}" wx:key="index">
             <view class="record-item">
@@ -93,5 +93,16 @@
                 </view>
             </view>
         </block>
+    </view>
+    
+    <!-- 加载更多指示器 -->
+    <view class="loading-more" wx:if="{{isLoadingMore}}">
+        <view class="loading-spinner"></view>
+        <text>加载中...</text>
+    </view>
+    
+    <!-- 没有更多数据提示 -->
+    <view class="no-more-data" wx:if="{{!hasMoreData && listData.length > 0}}">
+        没有更多记录了
     </view>
 </scroll-view>

@@ -93,7 +93,12 @@ Component({
         // 清空按钮
         handleDelete(e: any) {
             // 当前选中的用户id
-            const userId = e.currentTarget.dataset.id;
+            const userId = e.currentTarget.dataset.userid;
+            // Validate userId before proceeding
+            if (!userId || typeof userId !== 'number') {
+                console.warn('Invalid userId in handleDelete:', userId);
+                return;
+            }
             // 选中用户，清空积分
             const winPlayers = this.data.winPlayers.map((player: User) => player.id === userId ? {
                 ...player,
@@ -116,6 +121,12 @@ Component({
             // const selected = e.currentTarget.dataset.selected;
             const point = e.currentTarget.dataset.point;
             const userId = e.currentTarget.dataset.userid;
+            
+            // Validate userId before proceeding
+            if (!userId || typeof userId !== 'number') {
+                console.warn('Invalid userId in selectBasePoints:', userId);
+                return;
+            }
 
             this.setData({
                 points: this.data.points.map((point: any) => {
@@ -136,6 +147,12 @@ Component({
         },
         handleDecrease(e: any) {
             const userId = e.currentTarget.dataset.userid;
+            
+            // Validate userId before proceeding
+            if (!userId || typeof userId !== 'number') {
+                console.warn('Invalid userId in handleDecrease:', userId);
+                return;
+            }
 
             const user = this.data.winPlayers.filter(x => x.id === userId)[0]
             const target = user.gameInfo.basePoints - 1
@@ -160,6 +177,13 @@ Component({
         },
         handleIncrease(e: any) {
             const userId = e.currentTarget.dataset.userid;
+            
+            // Validate userId before proceeding
+            if (!userId || typeof userId !== 'number') {
+                console.warn('Invalid userId in handleIncrease:', userId);
+                return;
+            }
+            
             const user = this.data.winPlayers.filter(x => x.id === userId)[0]
             const target = user.gameInfo.basePoints + 1
             if (target > 20) {

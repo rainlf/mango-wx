@@ -90,6 +90,8 @@ Page({
             }
         })
     },
+    },
+    
     back() {
         wx.navigateBack()
     }

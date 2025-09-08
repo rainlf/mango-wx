@@ -1,11 +1,6 @@
 <!--index.wxml-->
 <block>
-    <scroll-view class="scrollarea" scroll-y type="list"
-                 refresher-enabled
-                 bindrefresherrefresh="onRefresh"
-                 refresher-triggered="{{isRefreshing}}"
-    >
-        <view class="container">
+    <view class="container">
             <view class="top-container">
                 <!-- userinfo 组件 -->
                 <userinfo class="user-info" username="{{user.username}}"
@@ -22,15 +17,21 @@
                 </block>
                 <block wx:if="{{showGameLog}}">
                     <majiang-log
+                            id="game-log-component"
                             listData="{{gameList}}"
+                            hasMoreData="{{hasMoreData}}"
                             bind:load="handleGameListLoad"
                             bind:refreshData="refreshData"
+                            bind:loadMore="handleLoadMore"
                     />
                 </block>
                 <block wx:if="{{showUserGameLog}}">
                     <majiang-log
+                            id="user-game-log-component"
                             listData="{{userGameList}}"
+                            hasMoreData="{{hasMoreData}}"
                             bind:load="handleGameListLoad"
+                            bind:loadMore="handleLoadMore"
                     />
                 </block>
 
@@ -48,7 +49,5 @@
             <view class="game-container">
                 <majiang-game showDrawer="{{showDrawer}}" bind:refreshData="refreshData"/>
             </view>
-
         </view>
-    </scroll-view>
 </block>
