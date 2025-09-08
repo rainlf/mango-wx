@@ -1,5 +1,5 @@
 import {getUserInfo, getUserRank} from "../../services/user-service";
-import {getMajiangLog, getMajiangLogByUser} from "../../services/majiang-service";
+import {getMajiangLog, getMajiangLogByUser, deleteMajiangLog} from "../../services/majiang-service";
 import {updateAvatarFromCache} from "../../utils/util";
 
 Page({
@@ -79,31 +79,49 @@ Page({
             console.log(`获取到第${page}页游戏数据，共${data.length}条记录`);
             
             const formattedList = data.map(item => {
-                if (item.recorder.user.id === user.id) {
-                    return {
+                // 为运动类型游戏添加标识字段
+                const isYunDongGame = item.gameType === 'YUN_DONG' || item.gameType === '运动';
+                
+                // 初始化formattedItem
+                let formattedItem;
+                
+                if (isYunDongGame) {
+                    // 运动类型游戏：直接构建完整的数据结构
+                    formattedItem = {
                         ...item,
-                        deleteIcon: '/images/delete.png',
+                        deleteIcon: item.recorder.user.id === user.id ? '/images/delete.png' : '/images/delete2.png',
                         player1: {...item.player1, avatar: updateAvatarFromCache(item.player1.id, avatars)},
-                        player2: {...item.player2, avatar: updateAvatarFromCache(item.player2.id, avatars)},
-                        player3: {...item.player3, avatar: updateAvatarFromCache(item.player3.id, avatars)},
-                        player4: {...item.player4, avatar: updateAvatarFromCache(item.player4.id, avatars)},
-                        losers: item.losers.map(loser => ({
-                            ...loser,
-                            user: {...loser.user, avatar: updateAvatarFromCache(loser.user.id, avatars)},
-                        })),
+                        // 提供默认空对象而非null，避免渲染时访问null.avatar出错
+                        player2: {avatar: ''},
+                        player3: {avatar: ''},
+                        player4: {avatar: ''},
+                        forOnePlayer: true,
+                        playerWin: item.winners.some(winner => winner.user.id === user.id),
+                        // 直接设置包含银行的输家列表
+                        losers: [{
+                            user: {
+                                id: -1,
+                                username: '银行',
+                                avatar: ''
+                            },
+                            userid: -1,
+                            points: 0,
+                            tags: ['运动']
+                        }],
                         winners: item.winners.map(winner => ({
                             ...winner,
                             user: {...winner.user, avatar: updateAvatarFromCache(winner.user.id, avatars)},
                         }))
-                    }
+                    };
                 } else {
-                    return {
+                    // 非运动类型游戏：保持原有逻辑
+                    formattedItem = {
                         ...item,
-                        deleteIcon: '/images/delete2.png',
+                        deleteIcon: item.recorder.user.id === user.id ? '/images/delete.png' : '/images/delete2.png',
                         player1: {...item.player1, avatar: updateAvatarFromCache(item.player1.id, avatars)},
-                        player2: {...item.player2, avatar: updateAvatarFromCache(item.player2.id, avatars)},
-                        player3: {...item.player3, avatar: updateAvatarFromCache(item.player3.id, avatars)},
-                        player4: {...item.player4, avatar: updateAvatarFromCache(item.player4.id, avatars)},
+                        player2: item.player2 ? {...item.player2, avatar: updateAvatarFromCache(item.player2.id, avatars)} : null,
+                        player3: item.player3 ? {...item.player3, avatar: updateAvatarFromCache(item.player3.id, avatars)} : null,
+                        player4: item.player4 ? {...item.player4, avatar: updateAvatarFromCache(item.player4.id, avatars)} : null,
                         losers: item.losers.map(loser => ({
                             ...loser,
                             user: {...loser.user, avatar: updateAvatarFromCache(loser.user.id, avatars)},
@@ -112,8 +130,10 @@ Page({
                             ...winner,
                             user: {...winner.user, avatar: updateAvatarFromCache(winner.user.id, avatars)},
                         }))
-                    }
+                    };
                 }
+                
+                return formattedItem;
             })
             
             const newGameList = isLoadMore ? [...this.data.gameList, ...formattedList] : formattedList;
@@ -177,6 +197,8 @@ Page({
             this.setData({ isLoadingMore: true });
         }
         
+        // 获取当前用户信息用于deleteIcon判断
+        const user = wx.getStorageSync('user') || {};
         const targetUserId = isLoadMore ? this.data.currentUserId : userId;
         
         // Validate targetUserId before making API call
@@ -198,24 +220,72 @@ Page({
                 return;
             }
             
-            console.log(`获取到用户ID ${targetUserId} 的第${page}页游戏数据，共${data.length}条记录`);
-            
-            const formattedList = data.map(item => {
-                return {
-                    ...item,
-                    player1: {...item.player1, avatar: updateAvatarFromCache(item.player1.id, avatars)},
-                    player2: {...item.player2, avatar: updateAvatarFromCache(item.player2.id, avatars)},
-                    player3: {...item.player3, avatar: updateAvatarFromCache(item.player3.id, avatars)},
-                    player4: {...item.player4, avatar: updateAvatarFromCache(item.player4.id, avatars)},
-                    losers: item.losers.map(loser => ({
-                        ...loser,
-                        user: {...loser.user, avatar: updateAvatarFromCache(loser.user.id, avatars)},
-                    })),
-                    winners: item.winners.map(winner => ({
-                        ...winner,
-                        user: {...winner.user, avatar: updateAvatarFromCache(winner.user.id, avatars)},
-                    }))
+            // 处理运动类型游戏和普通游戏的数据结构
+            const formattedList = data.map((item: any) => {
+                let formattedItem = {...item};
+                const isYunDongGame = item.type && item.type.includes('运动');
+                
+                if (isYunDongGame) {
+                    // 运动类型游戏：使用本地user变量替代this.data.user，确保数据一致性
+                    // 构建银行输家对象，确保结构与正常数据一致
+                    const bankLoser = {
+                        user: {
+                            id: -1,
+                            username: '银行',
+                            avatar: ''
+                        },
+                        userid: -1,
+                        points: 0,
+                        tags: ['运动']
+                    };
+                    
+                    formattedItem = {
+                        ...item,
+                        // 使用本地user变量替代this.data.user，确保安全访问
+                        deleteIcon: user && user.id ? '/images/delete.png' : '/images/delete2.png',
+                        player1: {...item.player1, avatar: updateAvatarFromCache(item.player1.id, avatars)},
+                        player2: {id: 0, username: '', avatar: ''},
+                        player3: {id: 0, username: '', avatar: ''},
+                        player4: {id: 0, username: '', avatar: ''},
+                        forOnePlayer: false, // 与正常数据保持一致
+                        playerWin: item.winners.some((winner: any) => winner.user.id === targetUserId),
+                        // 直接设置包含银行的输家列表
+                        losers: [bankLoser],
+                        winners: item.winners.map((winner: any) => ({
+                            ...winner,
+                            user: {...winner.user, avatar: updateAvatarFromCache(winner.user.id, avatars)},
+                        })),
+                        // 添加完整的recorder字段，使用本地user变量
+                        recorder: {
+                            user: {
+                                id: user.id || 0,
+                                username: user.username || '未知用户',
+                                avatar: user.avatar || ''
+                            },
+                            points: 0,
+                            tags: ['运动']
+                        }
+                    };
+                } else {
+                    // 非运动类型游戏：保持原有逻辑
+                    formattedItem = {
+                        ...item,
+                        player1: {...item.player1, avatar: updateAvatarFromCache(item.player1.id, avatars)},
+                        player2: item.player2 ? {...item.player2, avatar: updateAvatarFromCache(item.player2.id, avatars)} : null,
+                        player3: item.player3 ? {...item.player3, avatar: updateAvatarFromCache(item.player3.id, avatars)} : null,
+                        player4: item.player4 ? {...item.player4, avatar: updateAvatarFromCache(item.player4.id, avatars)} : null,
+                        losers: item.losers.map(loser => ({
+                            ...loser,
+                            user: {...loser.user, avatar: updateAvatarFromCache(loser.user.id, avatars)},
+                        })),
+                        winners: item.winners.map(winner => ({
+                            ...winner,
+                            user: {...winner.user, avatar: updateAvatarFromCache(winner.user.id, avatars)},
+                        }))
+                    };
                 }
+                
+                return formattedItem;
             })
             
             const newUserGameList = isLoadMore ? [...this.data.userGameList, ...formattedList] : formattedList;

@@ -56,13 +56,51 @@ Component({
                 // 场上玩家ids
                 const currentIds = currentPlayers.map((player: User) => (player.id))
 
-                // 赢家
-                const winPlayers = currentPlayers.map((player: User, index: number) => ({
-                    ...player,
-                    selected: index === 0,
-                    lastSelected: index === 0,
-                    gameInfo: {basePoints: 0, winTypes: [], multi: 1},
-                }))
+                // 获取当前用户信息
+                const recorder = wx.getStorageSync('user')
+                
+                // 赢家 - 如果当前是运动类型，只显示当前用户
+                let winPlayers
+                if (this.data.gameType === '运动') {
+                    // 优先从allPlayers中查找当前用户
+                    const allPlayers = res.allPlayers
+                    const recorderPlayer = allPlayers.find((player: User) => player.id === recorder.id);
+                    
+                    if (recorderPlayer) {
+                        winPlayers = [{ 
+                            ...recorderPlayer,
+                            selected: true,
+                            lastSelected: true,
+                            gameInfo: {
+                                basePoints: 10,
+                                winTypes: [], 
+                                multi: 1
+                            }
+                        }];
+                    } else {
+                        // 如果找不到匹配的记录者用户，创建一个默认用户
+                        winPlayers = [{ 
+                            id: recorder.id || 0,
+                            username: recorder.username || '当前用户',
+                            avatar: recorder.avatar || '/images/background.png',
+                            selected: true,
+                            lastSelected: true,
+                            gameInfo: {
+                                basePoints: 10,
+                                winTypes: [], 
+                                multi: 1
+                            }
+                        }];
+                    }
+                } else {
+                    // 其他类型显示所有当前玩家
+                    winPlayers = currentPlayers.map((player: User, index: number) => ({
+                        ...player,
+                        selected: index === 0,
+                        lastSelected: index === 0,
+                        gameInfo: {basePoints: 0, winTypes: [], multi: 1},
+                    }))
+                }
                 const selectedWinPlayerId = winPlayers.filter(x => x.selected)[0].id
 
                 // 输家
@@ -156,9 +194,11 @@ Component({
 
             const user = this.data.winPlayers.filter(x => x.id === userId)[0]
             const target = user.gameInfo.basePoints - 1
-            if (target < 0) {
+            // 运动类型最低分10，其他类型最低分0
+            const minPoints = this.data.gameType === '运动' ? 10 : 0
+            if (target < minPoints) {
                 wx.showToast({
-                    title: '底分不能小于 0 呀 😏',
+                    title: this.data.gameType === '运动' ? '运动分数不能小于 10 哦 🍑' : '底分不能小于 0 呀 😏',
                     icon: 'none',
                     duration: 1000
                 })
@@ -186,7 +226,8 @@ Component({
             
             const user = this.data.winPlayers.filter(x => x.id === userId)[0]
             const target = user.gameInfo.basePoints + 1
-            if (target > 20) {
+            // 非运动类型才检查底分上限
+            if (this.data.gameType !== '运动' && target > 20) {
                 wx.showToast({
                     title: '底分是不是太大了呀 😏',
                     icon: 'none',
@@ -246,25 +287,78 @@ Component({
             })
         },
 
-        // 选择胡牌类型
+        // 选择游戏类型
         selectWinType(e: any) {
             const type = e.currentTarget.dataset.type;
-            this.setData({
+            const recorder = wx.getStorageSync('user')
+            
+            // 设置基础数据
+            const data: any = {
                 gameType: type,
-                // 全部用户积分配置清零
-                winPlayers: this.data.winPlayers.map((player: User, index: number) => {
-                    return {
-                        ...player,
-                        selected: index === 0,
-                        lastSelected: index === 0,
-                        gameInfo: {basePoints: 0, winTypes: [], multi: 1}
-                    }
-                }),
+                // 全部用户积分配置重置
+                winPlayers: type === '运动' 
+                    // 运动类型只保留记录者一个人，从allPlayers中查找
+                    ? (() => {
+                        // 优先从allPlayers中查找当前用户
+                        const recorderPlayer = this.data.allPlayers.find((player: User) => player.id === recorder.id);
+                        
+                        if (recorderPlayer) {
+                            return [{
+                                ...recorderPlayer,
+                                selected: true,
+                                lastSelected: true,
+                                gameInfo: {
+                                    basePoints: 10,
+                                    winTypes: [], 
+                                    multi: 1
+                                }
+                            }];
+                        } 
+                        // 如果找不到匹配的记录者用户，创建一个默认用户
+                        return [{
+                            id: recorder.id || 0,
+                            username: recorder.username || '当前用户',
+                            avatar: recorder.avatar || '/images/background.png',
+                            selected: true,
+                            lastSelected: true,
+                            gameInfo: {
+                                basePoints: 10,
+                                winTypes: [],
+                                multi: 1
+                            }
+                        }];
+                      })()
+                    // 其他类型从allPlayers中获取所有玩家
+                    : this.data.allPlayers
+                        .filter((player: User) => this.data.selectUserToPlayList.includes(player.id))
+                        .map((player: User, index: number) => ({
+                            ...player,
+                            selected: index === 0,
+                            lastSelected: index === 0,
+                            gameInfo: {
+                                basePoints: 0,
+                                winTypes: [], 
+                                multi: 1
+                            }
+                        })),
                 // 底分全部反选
                 points: this.data.points.map((point: any) => ({...point, selected: false})),
                 // 牌型全部反选
                 winTypes: this.data.winTypes.map((winType: any) => ({...winType, selected: false})),
-            });
+            }
+            
+            // 运动类型特殊处理
+            if (type === '运动') {
+                // 为记录者设置10分
+                const recorder = wx.getStorageSync('user')
+                // 更新底分选中状态
+                data.points = this.data.points.map((point: any) => ({
+                    ...point, 
+                    selected: point.point === 10
+                }))
+            }
+            
+            this.setData(data);
         },
 
         // 选择赢家
@@ -448,6 +542,20 @@ Component({
             })
         },
         stopChangePlayers() {
+            // 对于运动类型，直接关闭换人模式，不做任何改变
+            if (this.data.gameType === '运动') {
+                wx.showToast({
+                    title: '运动类型不允许更换玩家',
+                    icon: 'none',
+                    duration: 1000
+                })
+                this.setData({
+                    changingPlayers: false,
+                    showButton: true
+                })
+                return;
+            }
+            
             const selectUser = this.data.allPlayers
                 .filter((player: User) => (this.data.selectUserToPlayList.includes(player.id)))
                 .map((player: User) => ({...player, selected: false}))
@@ -504,11 +612,20 @@ Component({
                 winners.forEach((player: User) => {player.gameInfo.basePoints = 1})
                 losers.forEach((player: User) => {player.gameInfo.basePoints = 3})
             }
+            if (this.data.gameType === '运动') {
+                // 运动类型：只有记录者自己
+                const recorder = wx.getStorageSync('user')
+                winners = this.data.winPlayers.filter((player: User) => {
+                    return player.id === recorder.id
+                })
+                losers = [] // 运动类型无输家
+            }
 
 
             let exit = false
             winners.forEach((player: User) => {
-                if (player.gameInfo.basePoints <= 0) {
+                // 只有非运动类型才需要校验分数
+                if (this.data.gameType !== '运动' && player.gameInfo.basePoints <= 0) {
                     exit = true
                 }
             })
@@ -579,18 +696,25 @@ Component({
                 gameType = 2
             } else if (this.data.gameType === '相公') {
                 gameType = 5
+            } else if (this.data.gameType === '运动') {
+                gameType = 6
             }
 
             let message = ''
             winners.forEach((player: User) => {
                 message += `赢家：${player.username}, 得分: ${player.gameInfo.basePoints * player.gameInfo.multi} 分\n`
             })
-            message += `输家: `
-            losers.forEach((player: User) => {
-                message += `${player.username}, `
-            })
-            message = message.replace(/..$/, '');
-            message += ``
+            
+            // 运动类型特殊处理，输家显示为银行
+            if (this.data.gameType === '运动') {
+                message += `输家: 银行`;
+            } else {
+                message += `输家: `
+                losers.forEach((player: User) => {
+                    message += `${player.username}, `
+                })
+                message = message.replace(/..$/, '');
+            }
 
             wx.showModal({
                 title: '提交确认',

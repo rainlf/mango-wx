@@ -76,8 +76,8 @@
                             <view class="player-info">
                                 <text class="nickname">{{item.user.username}}</text>
                                 <view class="tags">
-                                    <block wx:for="{{item.tags}}" wx:key="tag">
-                                        <text class="tag lose-tag">{{item}}</text>
+                                    <block wx:for="{{item.tags}}" wx:key="tag" wx:for-item="tagItem">
+                                        <text class="tag lose-tag">{{tagItem}}</text>
                                     </block>
                                 </view>
                             </view>

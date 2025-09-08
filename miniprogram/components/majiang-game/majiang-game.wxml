@@ -8,7 +8,7 @@
         <!-- 新增胡牌类型选择 -->
         <view class="drawer-content-top">
             <view class="win-type-selector">
-                <text class="selector-label">胡牌：</text>
+                <text class="selector-label">类型：</text>
                 <view class="type-buttons">
                     <view
                             class="type-btn {{gameType === '胡牌' ? 'active' : ''}}"
@@ -31,6 +31,13 @@
                     >
                         相公
                     </view>
+                    <view
+                            class="type-btn {{gameType === '运动' ? 'active' : ''}}"
+                            bindtap="selectWinType"
+                            data-type="运动"
+                    >
+                        运动
+                    </view>
                 </view>
             </view>
             <!-- 第一部分：标题+换人按钮 -->
@@ -41,30 +48,38 @@
                 <block wx:else>
                     <text class="section-title-user">🙂 选择赢家</text>
                 </block>
-                <text wx:if="{{!changingPlayers}}" class="replace-btn" bindtap="startChangePlayers">🔄 牌桌换人</text>
-                <text wx:else class="replace-btn" bindtap="stopChangePlayers">🍄 确认</text>
+                <text wx:if="{{!changingPlayers && gameType !== '运动'}}" class="replace-btn" bindtap="startChangePlayers">🔄 牌桌换人</text>
+                <text wx:elif="{{changingPlayers}}" class="replace-btn" bindtap="stopChangePlayers">🍄 确认</text>
             </view>
 
             <!-- 第二部分：玩家列表 -->
             <block wx:if="{{!changingPlayers}}">
                 <!-- 赢家列表 -->
                 <view class="players-grid">
-                    <view
-                            wx:for="{{winPlayers}}"
-                            wx:key="id"
-                            class="player-card {{item.selected ? 'active' : ''}} {{item.lastSelected ? 'last-active' : ''}}"
-                            bindtap="selectWinPlayer"
-                            data-id="{{item.id}}"
-                            data-selected="{{item.selected}}"
-                            data-lastSelected="{{item.lastSelected}}"
-                    >
-                        <image class="player-avatar" src="{{item.avatar}}"/>
-                        <text class="player-name">{{item.username}}</text>
-                    </view>
+                    <block wx:if="{{gameType === '运动'}}">
+                        <view class="player-card active last-active">
+                            <image class="player-avatar" src="{{winPlayers[0] && winPlayers[0].avatar ? winPlayers[0].avatar : '/images/background.png'}}"/>
+                            <text class="player-name">{{winPlayers[0] && winPlayers[0].username ? winPlayers[0].username : '当前用户'}}</text>
+                        </view>
+                    </block>
+                    <block wx:else>
+                        <view
+                                wx:for="{{winPlayers}}"
+                                wx:key="id"
+                                class="player-card {{item.selected ? 'active' : ''}} {{item.lastSelected ? 'last-active' : ''}}"
+                                bindtap="selectWinPlayer"
+                                data-id="{{item.id}}"
+                                data-selected="{{item.selected}}"
+                                data-lastSelected="{{item.lastSelected}}"
+                        >
+                            <image class="player-avatar" src="{{item.avatar}}"/>
+                            <text class="player-name">{{item.username}}</text>
+                        </view>
+                    </block>
                 </view>
                 <!-- 记分区域 -->
                 <block
-                        wx:if="{{gameType !== '相公'}}"
+                        wx:if="{{gameType !== '相公' || gameType === '运动'}}"
                         wx:for="{{winPlayers}}"
                         wx:key="id"
                         wx:for-item="user"
@@ -136,8 +151,8 @@
                                 </view>
                             </view>
 
-                            <!-- 牌型选择区块 -->
-                            <view class="section">
+                            <!-- 牌型选择区块 - 仅在非运动类型显示 -->
+                            <view wx:if="{{gameType !== '运动'}}" class="section">
                                 <text class="section-title">选择牌型</text>
                                 <view class="tile-group">
                                     <view
