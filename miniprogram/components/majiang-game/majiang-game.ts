@@ -81,40 +81,12 @@ Component({
     },
 
     createGamePlayers(gameType: string, players: User[], allPlayers: User[]) {
-      const recorder = wx.getStorageSync('user')
-      let winPlayers: User[] = []
-
-      if (gameType === '运动') {
-        const recorderPlayer = allPlayers.find((player: User) => player.id === recorder.id)
-        if (recorderPlayer) {
-          winPlayers = [
-            {
-              ...recorderPlayer,
-              selected: true,
-              lastSelected: true,
-              gameInfo: { basePoints: 10, winTypes: [], multi: 1 },
-            },
-          ]
-        } else {
-          winPlayers = [
-            {
-              id: recorder.id || 0,
-              username: recorder.username || '当前用户',
-              avatar: recorder.avatar || '',
-              selected: true,
-              lastSelected: true,
-              gameInfo: { basePoints: 10, winTypes: [], multi: 1 },
-            } as User,
-          ]
-        }
-      } else {
-        winPlayers = players.map((player: User, index: number) => ({
-          ...player,
-          selected: index === 0,
-          lastSelected: index === 0,
-          gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
-        }))
-      }
+      const winPlayers = players.map((player: User, index: number) => ({
+        ...player,
+        selected: index === 0,
+        lastSelected: index === 0,
+        gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
+      }))
 
       const selectedWinPlayer = winPlayers.find((player: any) => player.selected)
       const selectedWinPlayerId = selectedWinPlayer ? selectedWinPlayer.id : 0
@@ -202,10 +174,9 @@ Component({
 
       const user = this.data.winPlayers.filter((x: User) => x.id === userId)[0]
       const target = user.gameInfo.basePoints - 1
-      const minPoints = this.data.gameType === '运动' ? 10 : 0
-      if (target < minPoints) {
+      if (target < 0) {
         wx.showToast({
-          title: this.data.gameType === '运动' ? '运动分数不能小于 10 哦 🍑' : '底分不能小于 0 呀 😏',
+          title: '底分不能小于 0 呀 😏',
           icon: 'none',
           duration: 1000,
         })
@@ -230,7 +201,7 @@ Component({
 
       const user = this.data.winPlayers.filter((x: User) => x.id === userId)[0]
       const target = user.gameInfo.basePoints + 1
-      if (this.data.gameType !== '运动' && target > 20) {
+      if (target > 20) {
         wx.showToast({
           title: '底分是不是太大了呀 😏',
           icon: 'none',
@@ -284,8 +255,6 @@ Component({
 
     selectWinType(e: any) {
       const type = e.currentTarget.dataset.type
-      const recorder = wx.getStorageSync('user')
-
       const data: any = {
         gameType: type,
         points: this.data.points.map((point: any) => ({ ...point, selected: false })),
@@ -296,13 +265,6 @@ Component({
       const { winPlayers, losePlayers } = this.createGamePlayers(type, activePlayers, this.data.allPlayers)
       data.winPlayers = winPlayers
       data.losePlayers = losePlayers
-
-      if (type === '运动') {
-        data.points = this.data.points.map((point: any) => ({
-          ...point,
-          selected: point.point === 10,
-        }))
-      }
 
       this.setData(data)
     },
@@ -446,14 +408,6 @@ Component({
       })
     },
     startChangePlayers() {
-      if (this.data.gameType === '运动') {
-        wx.showToast({
-          title: '先切换到麻将对局类型再换人',
-          icon: 'none',
-          duration: 1000,
-        })
-        return
-      }
       this.setData({
         changingPlayers: true,
       })
@@ -517,15 +471,9 @@ Component({
           player.gameInfo.basePoints = 3
         })
       }
-      if (this.data.gameType === '运动') {
-        const recorder = wx.getStorageSync('user')
-        winners = this.data.winPlayers.filter((player: User) => player.id === recorder.id)
-        losers = []
-      }
-
       let exit = false
       winners.forEach((player: User) => {
-        if (this.data.gameType !== '运动' && player.gameInfo.basePoints <= 0) {
+        if (player.gameInfo.basePoints <= 0) {
           exit = true
         }
       })
@@ -591,8 +539,6 @@ Component({
         gameType = 2
       } else if (this.data.gameType === '相公') {
         gameType = 5
-      } else if (this.data.gameType === '运动') {
-        gameType = 6
       }
 
       let message = ''
@@ -600,15 +546,11 @@ Component({
         message += `赢家：${player.username}, 得分: ${player.gameInfo.basePoints * player.gameInfo.multi} 分\n`
       })
 
-      if (this.data.gameType === '运动') {
-        message += `输家: 银行`
-      } else {
-        message += `输家: `
-        losers.forEach((player: User) => {
-          message += `${player.username}, `
-        })
-        message = message.replace(/..$/, '')
-      }
+      message += `输家: `
+      losers.forEach((player: User) => {
+        message += `${player.username}, `
+      })
+      message = message.replace(/..$/, '')
 
       wx.showModal({
         title: '提交确认',

@@ -31,13 +31,6 @@
                     >
                         相公
                     </view>
-                    <view
-                            class="type-btn {{gameType === '运动' ? 'active' : ''}}"
-                            bindtap="selectWinType"
-                            data-type="运动"
-                    >
-                        运动
-                    </view>
                 </view>
             </view>
             <block wx:if="{{!changingPlayers}}">
@@ -48,33 +41,25 @@
                     <block wx:else>
                         <text class="section-title-user">🙂 选择赢家</text>
                     </block>
-                    <text wx:if="{{gameType !== '运动'}}" class="replace-btn" bindtap="startChangePlayers">🔄 牌桌换人</text>
+                    <text class="replace-btn" bindtap="startChangePlayers">🔄 牌桌换人</text>
                 </view>
                 <view class="players-grid">
-                    <block wx:if="{{gameType === '运动'}}">
-                        <view class="player-card active last-active">
-                            <image class="player-avatar" src="{{winPlayers[0] && winPlayers[0].avatar ? winPlayers[0].avatar : '/images/background.png'}}"/>
-                            <text class="player-name">{{winPlayers[0] && winPlayers[0].username ? winPlayers[0].username : '当前用户'}}</text>
-                        </view>
-                    </block>
-                    <block wx:else>
-                        <view
-                                wx:for="{{winPlayers}}"
-                                wx:key="id"
-                                class="player-card {{item.selected ? 'active' : ''}} {{item.lastSelected ? 'last-active' : ''}}"
-                                bindtap="selectWinPlayer"
-                                data-id="{{item.id}}"
-                                data-selected="{{item.selected}}"
-                                data-lastSelected="{{item.lastSelected}}"
-                        >
-                            <image class="player-avatar" src="{{item.avatar}}"/>
-                            <text class="player-name">{{item.username}}</text>
-                        </view>
-                    </block>
+                    <view
+                            wx:for="{{winPlayers}}"
+                            wx:key="id"
+                            class="player-card {{item.selected ? 'active' : ''}} {{item.lastSelected ? 'last-active' : ''}}"
+                            bindtap="selectWinPlayer"
+                            data-id="{{item.id}}"
+                            data-selected="{{item.selected}}"
+                            data-lastSelected="{{item.lastSelected}}"
+                    >
+                        <image class="player-avatar" src="{{item.avatar}}"/>
+                        <text class="player-name">{{item.username}}</text>
+                    </view>
                 </view>
                 <!-- 记分区域 -->
                 <block
-                        wx:if="{{gameType !== '相公' || gameType === '运动'}}"
+                        wx:if="{{gameType !== '相公'}}"
                         wx:for="{{winPlayers}}"
                         wx:key="id"
                         wx:for-item="user"
@@ -146,8 +131,7 @@
                                 </view>
                             </view>
 
-                            <!-- 牌型选择区块 - 仅在非运动类型显示 -->
-                            <view wx:if="{{gameType !== '运动'}}" class="section">
+                            <view class="section">
                                 <text class="section-title">选择牌型</text>
                                 <view class="tile-group">
                                     <view
