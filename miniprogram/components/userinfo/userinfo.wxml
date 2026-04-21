@@ -1,9 +1,15 @@
-<view class="userinfo-card">
-  <image wx:if="{{user.avatar}}" class="userinfo-avatar" src="{{user.avatar}}"></image>
-  <view wx:else class="userinfo-avatar userinfo-avatar-placeholder"></view>
-  <view class="userinfo-detail">
-    <text class="userinfo-name">{{user.nickname || user.username || '未设置昵称'}}</text>
-    <text class="userinfo-points">积分: {{user.points || 0}}</text>
+<!-- components/userinfo/userinfo.wxml -->
+<view class="userinfo-container">
+  <image class="avatar" src="{{avatar}}" />
+  <view class="info-right">
+    <text class="username">{{username}}</text>
+    <view class="points-box">
+      <text class="points-label">当前积分：</text>
+      <text class="points">{{points}}</text>
+    </view>
   </view>
-  <image class="userinfo-settings" src="/images/gears.png" bindtap="goToSettings"></image>
+
+  <view class="settings-btn" catch:tap="onSettingsClick">
+    <image class="gear-icon" src="/images/gears.png" />
+  </view>
 </view>

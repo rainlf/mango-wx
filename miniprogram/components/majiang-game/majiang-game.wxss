@@ -1,351 +1,486 @@
+/* 抽屉样式 */
+.drawer-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 999;
+}
+
+.drawer-container2 {
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    padding: 32rpx;
+    background: #fff;
+    border-radius: 16rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+}
+
 .mask {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 200;
-}
-
-.drawer {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #2c3e50;
-  border-radius: 24rpx 24rpx 0 0;
-  z-index: 300;
-  transform: translateY(100%);
-  transition: transform 0.3s ease;
-  max-height: 85vh;
-  display: flex;
-  flex-direction: column;
-}
-
-.drawer-open {
-  transform: translateY(0);
-}
-
-.drawer-handle {
-  display: flex;
-  justify-content: center;
-  padding: 20rpx 0;
-}
-
-.handle-bar {
-  width: 60rpx;
-  height: 8rpx;
-  background-color: rgba(255, 255, 255, 0.3);
-  border-radius: 4rpx;
+    background: rgba(0, 0, 0, 0.5);
+    position: absolute;
+    width: 100%;
+    height: 100%;
 }
 
 .drawer-content {
-  flex: 1;
-  padding: 0 30rpx 40rpx;
-  overflow-y: auto;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 90vh;
+    background: #fff;
+    border-radius: 24rpx 24rpx 0 0;
+    box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    flex-direction: column;
+    align-items: center;
 }
 
-.section {
-  margin-bottom: 30rpx;
+.drawer-content-top {
+    display: flex;
+    justify-content: start;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
 }
 
-.section-title {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 28rpx;
-  margin-bottom: 20rpx;
-  font-weight: bold;
+.drawer-content-bottom {
+    display: flex;
+    justify-content: space-between;
+    flex-direction: row;
+    align-items: center;
+    gap: 32rpx;
+    margin: 48rpx 0;
+    width: 100%;
 }
 
-/* 座位网格 */
-.seats-grid {
-  display: flex;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 16rpx;
+.btn {
+    flex: 1;
+    text-align: center;
+    padding: 24rpx;
+    border-radius: 12rpx;
+    font-weight: 500;
 }
 
-.seat-card {
-  width: calc(50% - 8rpx);
-  height: 160rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.08);
-  border-radius: 16rpx;
-  border: 2rpx solid rgba(255, 255, 255, 0.1);
+.confirm {
+    background: #2196f3;
+    color: white;
+    margin: 20rpx 20rpx 20rpx 10rpx
 }
 
-.seat-card.occupied {
-  border-color: #3498db;
+.cancel {
+    background: #f5f5f5;
+    color: #666;
+    margin: 20rpx 10rpx 20rpx 20rpx
 }
 
-.seat-card.empty {
-  border-style: dashed;
+/* 新增样式 */
+.win-type-selector {
+    padding: 22rpx;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    border-bottom: 2rpx solid #f5f5f5;
 }
 
-.seat-avatar {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
+.selector-label {
+    font-weight: bold;
+    font-size: 30rpx;
+    color: coral;
+    margin: 20rpx 10rpx 20rpx 20rpx;
 }
 
-.seat-name {
-  color: #fff;
-  font-size: 24rpx;
-  margin-top: 8rpx;
+.type-buttons {
+    display: flex;
+    flex-wrap: nowrap;
 }
 
-.seat-placeholder {
-  color: rgba(255, 255, 255, 0.3);
-  font-size: 60rpx;
-  font-weight: 300;
+.type-btn {
+    padding: 12rpx 32rpx;
+    border-radius: 8rpx;
+    background: #f5f5f5;
+    color: #666;
+    font-size: 28rpx;
+    transition: all 0.3s;
+    margin-right: 20rpx;
 }
 
-/* 玩家列表 */
-.player-list {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
+.type-btn.active {
+    background: #2196F3;
+    color: white;
+    box-shadow: 0 4rpx 12rpx rgba(33, 150, 243, 0.3);
 }
 
-.player-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 120rpx;
-  padding: 16rpx 0;
-  border-radius: 12rpx;
-  background-color: rgba(255, 255, 255, 0.05);
-  border: 2rpx solid transparent;
+/* 保持原有按钮交互 */
+.btn:active,
+.type-btn:active {
+    opacity: 0.8;
+    transform: scale(0.98);
 }
 
-.player-item.selected {
-  border-color: #2ecc71;
-  background-color: rgba(46, 204, 113, 0.15);
+/* 新增样式 */
+/* 第一部分样式 */
+.section-header {
+    display: flex;
+    justify-content: start;
+    align-items: center;
+    padding: 0 32rpx;
+    margin-top: 20rpx;
+    width: 90%;
 }
+
+.section-title-user {
+    font-size: 25rpx;
+    color: #333;
+    font-weight: 500;
+}
+
+.replace-btn {
+    font-size: 25rpx;
+    color: #2196F3;
+    padding: 8rpx 16rpx;
+    border-radius: 8rpx;
+    margin-left: 10rpx;
+}
+
+.replace-btn:active {
+    background: #e3f2fd;
+}
+
+/* 第二部分：玩家列表 */
+.players-grid {
+    width: 90%;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    align-content: flex-start; /* 顶部对齐防止顶部留白 */
+    padding: 20rpx 0;
+    /*gap: 20rpx; !* 替代justify-content: space-between *!*/
+}
+
+.player-card {
+    text-align: center;
+    padding: 20rpx;
+    border-radius: 16rpx;
+    background: #f8f9fa;
+    transition: all 0.2s;
+    margin: 5rpx;
+}
+
+.player-card.active {
+    background: #e3f2fd;
+    box-shadow: 0 4rpx 12rpx rgba(33, 150, 243, 0.15);
+}
+
+.player-card.last-active {
+    border: 2rpx solid mediumpurple; /* 紫色边框 */
+    box-shadow: 0 2rpx 8rpx rgba(156, 39, 176, 0.2); /* 可选浅紫色投影 */
+    transform: translateY(-2rpx); /* 可选悬浮效果 */
+    transition: all 0.2s; /* 保持与默认卡片的过渡动画一致 */
+}
+
+.detail-box.last-active {
+    border: 2rpx solid mediumpurple; /* 紫色边框 */
+    box-shadow: 0 2rpx 8rpx rgba(156, 39, 176, 0.2); /* 可选浅紫色投影 */
+    transform: translateY(-2rpx); /* 可选悬浮效果 */
+    transition: all 0.2s; /* 保持与默认卡片的过渡动画一致 */
+}
+
+.all-players-grid {
+    /*width: 100%;*/
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 20rpx 0;
+    /*align-content: flex-start;*/
+}
+
+.all-player-card {
+    text-align: center;
+    padding: 20rpx;
+    border-radius: 16rpx;
+    background: #f8f9fa;
+    transition: all 0.2s;
+    margin: 5rpx;
+}
+
+.all-player-card.active {
+    background: #e3f2fd;
+    color: white;
+    box-shadow: 0 4rpx 12rpx rgba(33, 150, 243, 0.3);
+}
+
+
 
 .player-avatar {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 50%;
+    width: 96rpx;
+    height: 96rpx;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 12rpx;
 }
 
 .player-name {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 22rpx;
-  margin-top: 8rpx;
-  max-width: 100rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+    font-size: 26rpx;
+    color: #666;
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-/* 操作栏 */
-.action-bar {
-  display: flex;
-  gap: 20rpx;
-  margin-top: 30rpx;
-  padding-bottom: 40rpx;
+/* 第三部分：详情框 */
+.detail-box {
+    width: 90%;
+    margin: 0 32rpx;
+    padding: 20rpx;
+    background: #fff;
+    border-radius: 16rpx;
+    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.08);
 }
 
-.btn-confirm {
-  flex: 2;
-  height: 80rpx;
-  line-height: 80rpx;
-  background-color: #2ecc71;
-  color: #fff;
-  font-size: 30rpx;
-  border-radius: 12rpx;
-  border: none;
+.arrow {
+    position: absolute;
+    top: -16rpx;
+    left: 50%;
+    width: 24rpx;
+    height: 24rpx;
+    background: #fff;
+    transform: translateX(-50%) rotate(45deg);
+    box-shadow: -2rpx -2rpx 4rpx rgba(0, 0, 0, 0.06);
 }
 
-.btn-confirm[disabled] {
-  background-color: rgba(46, 204, 113, 0.3);
-  color: rgba(255, 255, 255, 0.4);
+.detail-content {
+    position: relative;
+    z-index: 1;
+    width: 100%;
 }
 
-.btn-confirm::after,
-.btn-back::after {
-  border: none;
+.score-input {
+    display: flex;
+    align-items: center;
+    font-size: 28rpx;
 }
 
-.btn-back {
-  flex: 1;
-  height: 80rpx;
-  line-height: 80rpx;
-  background-color: rgba(255, 255, 255, 0.1);
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 30rpx;
-  border-radius: 12rpx;
-  border: none;
+.score-input input {
+    flex: 1;
+    margin-left: 20rpx;
+    padding: 12rpx;
+    border-bottom: 2rpx solid #eee;
 }
 
-/* 类型选择 */
-.type-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16rpx;
+.scroll-view-container {
+    height: 900rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* 新增属性，使元素水平居中 */
 }
 
-.type-card {
-  width: calc(50% - 8rpx);
-  height: 100rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.08);
-  border-radius: 12rpx;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 30rpx;
-  border: 2rpx solid transparent;
+/* 内容行布局 */
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 5rpx;
 }
 
-.type-card.active {
-  border-color: #3498db;
-  background-color: rgba(52, 152, 219, 0.2);
-  color: #3498db;
+.detail-row-title {
+    display: flex;
+    justify-content: start;
+    align-items: center;
 }
 
-/* 赢家/输家选择 */
-.player-select-grid {
-  display: flex;
-  justify-content: space-between;
-  gap: 12rpx;
+/* 删除按钮样式 */
+.delete-btn {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 50%;
+    background: #FEF2F2;
+    color: #EF4444;
+    font-size: 40rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.1);
 }
 
-.player-select-card {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20rpx 0;
-  background-color: rgba(255, 255, 255, 0.06);
-  border-radius: 12rpx;
-  border: 2rpx solid transparent;
+/* 点击反馈效果 */
+.delete-btn-hover {
+    background: #FECACA !important;
+    transform: scale(0.95);
 }
 
-.player-select-card.winner {
-  border-color: #f1c40f;
-  background-color: rgba(241, 196, 15, 0.15);
+/* 按钮动效 */
+.delete-btn:active {
+    box-shadow: 0 0rpx 4rpx rgba(0, 0, 0, 0.2);
 }
 
-.player-select-card.loser {
-  border-color: #e74c3c;
-  background-color: rgba(231, 76, 60, 0.15);
+/* 文字内容样式 */
+.detail-title {
+    font-size: 32rpx;
+    font-weight: 500;
+    color: coral;
+    margin-left: 10rpx;
 }
 
-.ps-avatar {
-  width: 64rpx;
-  height: 64rpx;
-  border-radius: 50%;
+/* 增加加载态效果 */
+.delete-btn.loading::after {
+    content: "···";
+    animation: dotting 1s infinite;
 }
 
-.ps-name {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 22rpx;
-  margin-top: 8rpx;
+@keyframes dotting {
+    0% {
+        content: ".";
+    }
+    33% {
+        content: "..";
+    }
+    66% {
+        content: "...";
+    }
 }
 
-/* 底分选择 */
-.base-points-row {
-  display: flex;
-  gap: 12rpx;
-  flex-wrap: wrap;
+
+/* 底分样式 */
+.name {
+    font-size: 34rpx;
+    color: #4B5563;
+    font-weight: 500;
 }
 
-.bp-card {
-  width: 80rpx;
-  height: 80rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.08);
-  border-radius: 12rpx;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 28rpx;
-  border: 2rpx solid transparent;
+.base-score {
+    font-size: 36rpx;
+    color: #EF4444;
+    font-weight: 600;
 }
 
-.bp-card.active {
-  border-color: #e67e22;
-  background-color: rgba(230, 126, 34, 0.2);
-  color: #e67e22;
+/* 按钮行布局 */
+.button-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20rpx;
+    gap: 20rpx;
 }
 
-.custom-bp-row {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 30rpx;
-  margin-top: 20rpx;
+.tag-group {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16rpx;
 }
 
-.bp-adjust {
-  width: 60rpx;
-  height: 60rpx;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(255, 255, 255, 0.1);
-  border-radius: 50%;
-  color: #fff;
-  font-size: 36rpx;
+/* 标签按钮样式 */
+.tag-btn {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 16rpx;
+    background: #F3F4F6;
+    color: #6B7280;
+    font-size: 30rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-right: 5rpx;
 }
 
-.bp-value {
-  color: #e67e22;
-  font-size: 36rpx;
-  font-weight: bold;
-  min-width: 60rpx;
-  text-align: center;
+.tag-btn.active {
+    background: cornflowerblue;
+    color: white;
+    border-color: #90CAF9; /* 浅蓝边框 */
+    box-shadow: 0 4rpx 12rpx rgba(13, 71, 161, 0.15); /* 增强阴影 */
 }
 
-/* 番型选择 */
-.win-type-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12rpx;
+/* 操作按钮组 */
+.action-group {
+    display: flex;
+    /*flex-direction: column;*/
+    gap: 12rpx;
 }
 
-.wt-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 12rpx 20rpx;
-  background-color: rgba(255, 255, 255, 0.06);
-  border-radius: 10rpx;
-  border: 2rpx solid transparent;
+.action-btn {
+    width: 60rpx;
+    height: 60rpx;
+    border-radius: 50%;
+    background: #E6F4FF;
+    color: #1A73E8;
+    font-size: 30rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    margin-left: 15rpx;
 }
 
-.wt-card.active {
-  border-color: #9b59b6;
-  background-color: rgba(155, 89, 182, 0.2);
+/* 交互反馈 */
+.tag-btn-hover {
+    transform: translateY(-2rpx);
 }
 
-.wt-name {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 24rpx;
+.action-btn-hover {
+    background: #B6D7FF !important;
 }
 
-.wt-multi {
-  color: rgba(255, 255, 255, 0.4);
-  font-size: 20rpx;
-  margin-top: 4rpx;
+.action-btn:active {
+    transform: scale(0.92);
 }
 
-/* 运动信息 */
-.yundong-info {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40rpx;
-  background-color: rgba(46, 204, 113, 0.1);
-  border-radius: 12rpx;
+.plus:active {
+    color: #22C55E; /* 加号点击色 */
 }
 
-.yundong-text {
-  color: #2ecc71;
-  font-size: 28rpx;
+.minus:active {
+    color: #DC2626; /* 减号点击色 */
+}
+
+
+/* 区块标题 */
+.section {
+    margin-top: 20rpx;
+}
+
+.section-title {
+    font-size: 30rpx;
+    color: #64748B;
+    margin-bottom: 20rpx;
+    display: block;
+}
+
+/* 牌型标签容器 */
+.tile-group {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    margin-bottom: 20rpx;
+    /*gap: 20rpx;*/
+}
+
+.tile-btn {
+    background: #F3F4F6;
+    color: #6B7280;
+    border-radius: 12rpx;
+    padding: 16rpx 32rpx;
+    font-size: 28rpx;
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+    border: 2rpx solid transparent;
+    box-shadow: 0 2rpx 8rpx rgba(33, 150, 243, 0.1); /* 新增基础阴影 */
+    margin-right: 5rpx;
+    margin-bottom: 10rpx;
+}
+
+/* 选中状态 */
+.tile-btn.active {
+    background: cornflowerblue;
+    color: white;
+    border-color: #90CAF9; /* 浅蓝边框 */
+    box-shadow: 0 4rpx 12rpx rgba(13, 71, 161, 0.15); /* 增强阴影 */
 }

@@ -1,83 +1,108 @@
-<view class="log-container">
-  <view class="log-title-bar">
-    <text class="log-title">{{title || '对局记录'}}</text>
-  </view>
+<scroll-view
+        class="list-container"
+        scroll-y
+        refresher-enabled
+        bindrefresherrefresh="onRefresh"
+        bindscrolltolower="onScrollToLower"
+        refresher-triggered="{{isRefreshing}}">
+    <view class="list-content">
+        <block wx:for="{{listData}}" wx:key="index">
+            <view class="record-item">
+                <!-- 对局信息头部 -->
+                <view class="record-header">
+                    <view class="record-header-left">
+                        <block wx:if="{{item.forOnePlayer}}">
+                            <block wx:if="{{item.playerWin}}">
+                                <text class="win-type2">{{'赢😋'}}</text>
+                            </block>
+                            <block wx:else>
+                                <text class="win-type">{{'输😭'}}</text>
+                            </block>
+                        </block>
+                        <block wx:else>
+                            <block wx:if="{{item.type === '自摸' || item.type === '相公'}}">
+                                <text class="win-type2">{{item.type}}</text>
+                            </block>
+                            <block wx:else>
+                                <text class="win-type">{{item.type}}</text>
+                            </block>
+                        </block>
 
-  <scroll-view
-    scroll-y
-    class="log-scroll"
-    bindscrolltolower="onScrollToLower"
-    refresher-enabled
-    bindrefresherrefresh="onRefresh"
-    refresher-triggered="{{isRefreshing}}"
-  >
-    <view class="log-list">
-      <view
-        class="log-card {{item.forOnePlayer ? (item.playerWin ? 'card-win' : 'card-lose') : ''}}"
-        wx:for="{{logList}}"
-        wx:key="id"
-      >
-        <!-- 头部：类型 + 四个头像 + 时间 -->
-        <view class="log-header">
-          <text class="log-type">{{item.type}}</text>
-          <view class="log-players-row">
-            <image class="log-player-avatar" src="{{item.player1.avatar}}"></image>
-            <image class="log-player-avatar" src="{{item.player2.avatar}}"></image>
-            <image class="log-player-avatar" src="{{item.player3.avatar}}"></image>
-            <image class="log-player-avatar" src="{{item.player4.avatar}}"></image>
-          </view>
-          <text class="log-time">{{item.createdTime}}</text>
-          <image
-            wx:if="{{item.deleteIcon}}"
-            class="log-delete-icon"
-            src="{{item.deleteIcon}}"
-            data-game-id="{{item.id}}"
-            catchtap="onDeleteTap"
-          ></image>
-        </view>
 
-        <!-- 赢家区域 -->
-        <view class="log-winners" wx:if="{{item.winners.length > 0}}">
-          <view class="log-winner-item" wx:for="{{item.winners}}" wx:for-item="winner" wx:key="index">
-            <image class="log-item-avatar" src="{{winner.user.avatar}}"></image>
-            <view class="log-item-info">
-              <text class="log-item-name">{{winner.user.nickname || winner.user.username}}</text>
-              <view class="log-item-tags" wx:if="{{winner.tags.length > 0}}">
-                <text class="log-tag" wx:for="{{winner.tags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
-              </view>
+                        <view class="player-avatars">
+                            <image class="avatar-small" src="{{item.player1.avatar}}"/>
+                            <image class="avatar-small" src="{{item.player2.avatar}}"/>
+                            <image class="avatar-small" src="{{item.player3.avatar}}"/>
+                            <image class="avatar-small" src="{{item.player4.avatar}}"/>
+                        </view>
+                    </view>
+
+                    <view class="record-header-right">
+                        <text class="game-time">{{item.createdTime}}</text>
+                        <image
+                                class="delete-btn"
+                                src="{{item.deleteIcon}}"
+                                bindtap="showDeleteConfirm"
+                                data-id="{{item.id}}"
+                                data-recorderid="{{item.recorder.user.id}}"
+                                mode="widthFix"
+                        />
+                    </view>
+                </view>
+
+                <!-- 赢家区域 -->
+                <view class="winner-section">
+                    <block wx:for="{{item.winners}}" wx:key="userid">
+                        <view class="player-row winner">
+                            <image class="avatar" src="{{item.user.avatar}}"/>
+                            <view class="player-info">
+                                <text class="nickname">{{item.user.username}}</text>
+                                <view class="tags">
+                                    <block wx:for="{{item.tags}}" wx:key="tag">
+                                        <text class="tag win-tag">{{item}}</text>
+                                    </block>
+                                </view>
+                            </view>
+                            <text class="score-change">+{{item.points}}</text>
+                        </view>
+                    </block>
+                </view>
+
+                <!-- 输家区域 -->
+                <view class="loser-section">
+                    <block wx:for="{{item.losers}}" wx:key="userid">
+                        <view class="player-row loser">
+                            <image class="avatar" src="{{item.user.avatar}}"/>
+                            <view class="player-info">
+                                <text class="nickname">{{item.user.username}}</text>
+                                <view class="tags">
+                                    <block wx:for="{{item.tags}}" wx:key="tag" wx:for-item="tagItem">
+                                        <text class="tag lose-tag">{{tagItem}}</text>
+                                    </block>
+                                </view>
+                            </view>
+                            <text class="score-change2">{{item.points}}</text>
+                        </view>
+                    </block>
+                </view>
+
+                <!-- 记账信息 -->
+                <view class="bookkeeping-info">
+                    <text>记账玩家：{{item.recorder.user.username}}</text>
+                    <text>奖励积分：+{{item.recorder.points}}</text>
+                </view>
             </view>
-            <text class="log-item-points win-points">+{{winner.points}}</text>
-          </view>
-        </view>
-
-        <!-- 输家区域 -->
-        <view class="log-losers" wx:if="{{item.losers.length > 0}}">
-          <view class="log-loser-item" wx:for="{{item.losers}}" wx:for-item="loser" wx:key="index">
-            <image class="log-item-avatar" src="{{loser.user.avatar}}"></image>
-            <view class="log-item-info">
-              <text class="log-item-name">{{loser.user.nickname || loser.user.username}}</text>
-            </view>
-            <text class="log-item-points lose-points">{{loser.points}}</text>
-          </view>
-        </view>
-
-        <!-- 记录者信息 -->
-        <view class="log-recorder" wx:if="{{item.recorder && item.recorder.user && item.recorder.user.id}}">
-          <text class="recorder-label">记录：{{item.recorder.user.nickname || item.recorder.user.username}}</text>
-          <text class="recorder-points" wx:if="{{item.recorder.points > 0}}">+{{item.recorder.points}}</text>
-        </view>
-      </view>
+        </block>
     </view>
-
-    <!-- 加载更多提示 -->
-    <view class="load-more-tip" wx:if="{{isLoadingMore}}">
-      <text>加载中...</text>
+    
+    <!-- 加载更多指示器 -->
+    <view class="loading-more" wx:if="{{isLoadingMore}}">
+        <view class="loading-spinner"></view>
+        <text>加载中...</text>
     </view>
-    <view class="load-more-tip" wx:if="{{!isLoadingMore && logList.length > 0 && noMore}}">
-      <text>没有更多了</text>
+    
+    <!-- 没有更多数据提示 -->
+    <view class="no-more-data" wx:if="{{!hasMoreData && listData.length > 0}}">
+        没有更多记录了
     </view>
-    <view class="empty-tip" wx:if="{{!isLoadingMore && logList.length === 0}}">
-      <text>暂无对局记录</text>
-    </view>
-  </scroll-view>
-</view>
+</scroll-view>

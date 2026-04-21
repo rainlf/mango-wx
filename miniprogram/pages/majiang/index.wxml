@@ -1,56 +1,57 @@
-<image class="page-bg" src="/images/background.png" mode="aspectFill"></image>
-<view class="page-bg-mask"></view>
-<view class="page-container">
-  <!-- 用户信息卡片 -->
-  <userinfo user="{{user}}" bind:refreshUser="refreshUser"></userinfo>
+<block>
+  <view class="container">
+    <view class="top-container">
+      <!-- userinfo 组件 -->
+      <userinfo
+        class="user-info"
+        username="{{user.username}}"
+        points="{{user.points}}"
+        avatar="{{user.avatar}}"
+      />
 
-  <!-- 排行榜视图 -->
-  <rank
-    wx:if="{{showUserRank}}"
-    rankList="{{rankList}}"
-    bind:clickUserAvatar="onClickUserAvatar"
-    bind:refresh="fetchUserRank"
-  ></rank>
+      <block wx:if="{{showUserRank}}">
+        <rank
+          class="rank"
+          listData="{{rankList}}"
+          bind:load="handleRankListLoad"
+          bind:clickUserAvatar="handleClickUserAvatar"
+        />
+      </block>
 
-  <!-- 全局对局记录 -->
-  <majiang-log
-    wx:if="{{showGameLog}}"
-    id="game-log"
-    logList="{{gameLogList}}"
-    title="对局记录"
-    bind:loadMore="handleLoadMore"
-    bind:deleteLog="handleDeleteLog"
-    bind:refresh="handleRefreshGameLog"
-  ></majiang-log>
+      <block wx:if="{{showGameLog}}">
+        <majiang-log
+          id="game-log-component"
+          listData="{{gameList}}"
+          hasMoreData="{{hasMoreData}}"
+          bind:load="handleGameListLoad"
+          bind:refreshData="refreshData"
+          bind:loadMore="handleLoadMore"
+        />
+      </block>
 
-  <!-- 个人对局记录 -->
-  <majiang-log
-    wx:if="{{showUserGameLog}}"
-    id="user-game-log"
-    logList="{{userGameLogList}}"
-    title="{{currentViewUser.nickname || currentViewUser.username}}的对局"
-    bind:loadMore="handleLoadMore"
-    bind:deleteLog="handleDeleteLog"
-    bind:refresh="handleRefreshUserGameLog"
-  ></majiang-log>
-
-  <!-- 底部操作栏 -->
-  <view class="bottom-bar">
-    <view class="bar-btn {{showUserRank ? 'active' : ''}}" bindtap="switchToRank">
-      <text>排行榜</text>
+      <block wx:if="{{showUserGameLog}}">
+        <majiang-log
+          id="user-game-log-component"
+          listData="{{userGameList}}"
+          hasMoreData="{{hasMoreData}}"
+          bind:load="handleGameListLoad"
+          bind:loadMore="handleLoadMore"
+        />
+      </block>
     </view>
-    <view class="bar-btn {{showGameLog ? 'active' : ''}}" bindtap="switchToGameLog">
-      <text>对局记录</text>
+
+    <view class="bottom-container">
+      <block wx:if="{{showUserRankBtn}}">
+        <button class="history-btn" catch:tap="openUserRank">玩家排行</button>
+      </block>
+      <block wx:else>
+        <button class="history-btn" catch:tap="openGameLog">对局记录</button>
+      </block>
+      <button class="start-btn" catch:tap="showSaveGameLog">开始记录</button>
     </view>
-    <view class="bar-btn record-btn" bindtap="openGamePanel">
-      <text>开始记录</text>
+
+    <view class="game-container">
+      <majiang-game showDrawer="{{showDrawer}}" bind:refreshData="refreshData" />
     </view>
   </view>
-
-  <!-- 游戏记录抽屉 -->
-  <majiang-game
-    id="majiang-game"
-    user="{{user}}"
-    bind:gameRecorded="onGameRecorded"
-  ></majiang-game>
-</view>
+</block>

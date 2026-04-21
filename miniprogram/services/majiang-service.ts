@@ -36,6 +36,13 @@ export const getPlayers = (): Promise<PlayersResponse> => {
   })
 }
 
+export const getMajiangPlayers = (): Promise<MajiangPlayers> => {
+  return getPlayers().then((res) => ({
+    currentPlayers: res.current_players || [],
+    allPlayers: res.all_players || [],
+  }))
+}
+
 // 更新牌桌玩家
 export const updatePlayers = (userIds: number[]): Promise<any> => {
   return request<any>({
@@ -54,4 +61,12 @@ export const recordMaJiangGame = (data: RecordMaJiangGameRequest): Promise<any> 
     data: data,
     header: { 'content-type': 'application/json' },
   })
+}
+
+export const saveMaJiangGame = (data: RecordMaJiangGameRequest): Promise<any> => {
+  return recordMaJiangGame(data)
+}
+
+export const deleteMajiangLog = (gameId: number, _userId: number): Promise<any> => {
+  return cancelGame(gameId)
 }

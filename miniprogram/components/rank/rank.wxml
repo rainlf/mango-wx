@@ -1,47 +1,62 @@
 <scroll-view
-  scroll-y
-  class="rank-container"
-  refresher-enabled
-  bindrefresherrefresh="onRefresh"
-  refresher-triggered="{{isRefreshing}}"
+        class="list-container"
+        scroll-y
+        refresher-enabled
+        bindrefresherrefresh="onRefresh"
+        refresher-triggered="{{isRefreshing}}"
 >
-  <view class="rank-list">
-    <view class="rank-item" wx:for="{{rankList}}" wx:key="id">
-      <!-- 排名 -->
-      <view class="rank-badge">
-        <image wx:if="{{index < 3}}" class="rank-crown" src="/images/king{{index + 1}}.png"></image>
-        <text wx:else class="rank-number">{{index + 1}}</text>
-      </view>
-      
-      <!-- 头像 -->
-      <image
-        wx:if="{{item.avatar}}"
-        class="rank-avatar"
-        src="{{item.avatar}}"
-        data-user="{{item}}"
-        bindtap="onAvatarTap"
-      ></image>
-      <view
-        wx:else
-        class="rank-avatar rank-avatar-placeholder"
-        data-user="{{item}}"
-        bindtap="onAvatarTap"
-      ></view>
-      
-      <!-- 昵称和标签 -->
-      <view class="rank-info">
-        <text class="rank-name">{{item.nickname || item.username}}</text>
-        <view class="rank-tags" wx:if="{{item.lastTags.length > 0}}">
-          <text class="rank-tag" wx:for="{{item.lastTags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
-        </view>
-      </view>
-      
-      <!-- 积分 -->
-      <text class="rank-points {{item.points >= 0 ? 'positive' : 'negative'}}">{{item.points}}</text>
+    <view class="list-content">
+        <block wx:for="{{listData}}" wx:key="index">
+            <view class="list-item">
+                <!-- 排名徽章 -->
+
+                <view wx:if="{{index === 0}}">
+                    <view class="rank-king-box">
+                    <image class="rank-king" src="/images/king1.png" mode="aspectFill"/>
+                    </view>
+                </view>
+                <view wx:elif="{{index === 1}}">
+                    <view class="rank-king-box">
+                        <image class="rank-king" src="/images/king2.png" mode="aspectFill"/>
+                    </view>
+                </view>
+                <view wx:elif="{{index === 2}}">
+                    <view class="rank-king-box">
+                        <image class="rank-king" src="/images/king3.png" mode="aspectFill"/>
+                    </view>
+                </view>
+                <view wx:else>
+                    <view class="rank-box">
+                        <text class="rank-text">{{index + 1}}</text>
+                    </view>
+                </view>
+
+
+                <!-- 昵称和标签区 -->
+                <view class="info-box">
+                    <view class="user-info-box">
+                        <image class="avatar" src="{{item.avatar}}" mode="aspectFill" catch:tap="clickUserAvatar" data-id="{{item.id}}"/>
+                        <text class="nickname">{{item.username}}</text>
+                    </view>
+                    <view class="tags-box">
+                        <block wx:for="{{item.lastTags}}" wx:key="index">
+                            <text wx:if="{{item === '一炮双响' || item === '一炮三响' || item === '相公'}}" class="tag2">{{item}}</text>
+                            <text wx:else class="tag">{{item}}</text>
+                        </block>
+                    </view>
+                </view>
+
+                <!-- 得分展示 -->
+                <view class="score-box">
+                    <block wx:if="{{item.points >= 0}}">
+                        <text class="score-text">{{item.points}}</text>
+                    </block>
+                    <block wx:else>
+                        <text class="score-text2">{{item.points}}</text>
+                    </block>
+                    <text class="score-label">积分</text>
+                </view>
+            </view>
+        </block>
     </view>
-  </view>
-  
-  <view class="empty-tip" wx:if="{{rankList.length === 0}}">
-    <text>暂无排名数据</text>
-  </view>
 </scroll-view>

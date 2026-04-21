@@ -1,6 +1,9 @@
 Component({
   properties: {
-    rankList: { type: Array, value: [] },
+    listData: {
+      type: Array,
+      value: [],
+    },
   },
 
   data: {
@@ -8,17 +11,56 @@ Component({
   },
 
   methods: {
-    onAvatarTap(e: any) {
-      const user = e.currentTarget.dataset.user
-      this.triggerEvent('clickUserAvatar', user)
-    },
-
     onRefresh() {
-      this.setData({ isRefreshing: true })
-      this.triggerEvent('refresh')
-      setTimeout(() => {
-        this.setData({ isRefreshing: false })
-      }, 1000)
+      if (this.data.isRefreshing) {
+        return
+      }
+
+      this.setData({
+        isRefreshing: true,
+      })
+
+      this.loadData().finally(() => {
+        this.setData({
+          isRefreshing: false,
+        })
+      })
+    },
+    async loadData() {
+      try {
+        // 触发父页面方法（带参数）
+        this.triggerEvent(
+          'load',
+          {
+            from: 'component',
+          },
+          {
+            bubbles: true, // 是否冒泡
+            composed: true, // 是否跨越组件边界
+          }
+        )
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    clickUserAvatar(e: any) {
+      const id = e.target.dataset.id
+      try {
+        // 触发父页面方法（带参数）
+        this.triggerEvent(
+          'clickUserAvatar',
+          {
+            from: 'component',
+            userId: id,
+          },
+          {
+            bubbles: true, // 是否冒泡
+            composed: true, // 是否跨越组件边界
+          }
+        )
+      } catch (e) {
+        console.error(e)
+      }
     },
   },
 })

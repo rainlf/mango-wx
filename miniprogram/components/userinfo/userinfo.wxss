@@ -1,48 +1,78 @@
-.userinfo-card {
+/* 用户信息组件样式 */
+.userinfo-container {
   display: flex;
   align-items: center;
-  padding: 28rpx 30rpx;
-  gap: 20rpx;
-  margin: 12rpx 20rpx 0;
-  border-radius: 18rpx;
-  background-color: rgba(10, 18, 30, 0.35);
-  border: 1rpx solid rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(10rpx);
+  padding: 32rpx;
+  background: #fff;
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.08);
+  margin: 20rpx 20rpx 10rpx 20rpx;
 }
 
-.userinfo-avatar {
-  width: 88rpx;
-  height: 88rpx;
+.avatar {
+  width: 160rpx;
+  height: 160rpx;
   border-radius: 50%;
-  border: 3rpx solid rgba(255, 255, 255, 0.2);
+  margin-right: 32rpx;
+  border: 4rpx solid #f5f5f5;
 }
 
-.userinfo-avatar-placeholder {
-  background-color: rgba(255, 255, 255, 0.12);
-}
-
-.userinfo-detail {
-  flex: 1;
+.info-right {
   display: flex;
   flex-direction: column;
-  gap: 6rpx;
+  justify-content: center;
 }
 
-.userinfo-name {
-  color: rgba(255, 255, 255, 0.92);
-  font-size: 30rpx;
+.username {
+  font-size: 36rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16rpx;
+}
+
+.points-box {
+  display: flex;
+  align-items: center;
+  background: #fff7e6;
+  padding: 8rpx 24rpx;
+  border-radius: 40rpx;
+}
+
+.points-label {
+  font-size: 26rpx;
+  color: #666;
+}
+
+.points {
+  font-size: 32rpx;
+  color: #ff9900;
   font-weight: bold;
-  text-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.35);
+  margin-left: 12rpx;
 }
 
-.userinfo-points {
-  color: rgba(255, 255, 255, 0.78);
-  font-size: 24rpx;
-  text-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.25);
+/* components/userinfo/userinfo.wxss */
+.settings-btn {
+  position: absolute;
+  right: 10rpx;
+  top: 50%;
+  transform: translateY(-50%);
+  padding: 16rpx;
+  opacity: 0.8;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 100%;
 }
 
-.userinfo-settings {
-  width: 44rpx;
-  height: 44rpx;
-  opacity: 0.5;
+.gear-icon {
+  width: 48rpx;
+  height: 48rpx;
+  transition: transform 0.3s ease;
+}
+
+.settings-btn:active .gear-icon {
+  transform: rotate(30deg);
+  opacity: 1;
 }

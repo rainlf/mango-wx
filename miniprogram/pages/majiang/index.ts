@@ -2,83 +2,45 @@ import { getUserInfo, getUserRank } from '../../services/user-service'
 import { getGameList, getGameListByUser, cancelGame } from '../../services/majiang-service'
 import { convertUserDTO, convertGameDTO, updateAvatarFromCache } from '../../utils/util'
 
-const PAGE_SIZE = 10
-
 Page({
   data: {
-    user: null as any,
-    // 视图控制
+    user: {} as User,
+    isRefreshing: false,
+    isLoadingMore: false,
+    hasMoreData: true,
+    currentPage: 0,
+    pageSize: 10,
+    rankList: [] as User[],
+    gameList: [] as MajiangLog[],
+    userGameList: [] as MajiangLog[],
     showUserRank: true,
     showGameLog: false,
     showUserGameLog: false,
-    // 排行榜
-    rankList: [] as User[],
-    // 全局对局记录
-    gameLogList: [] as MajiangLog[],
-    gameLogOffset: 0,
-    gameLogHasMore: true,
-    // 个人对局记录
-    userGameLogList: [] as MajiangLog[],
-    userGameLogOffset: 0,
-    userGameLogHasMore: true,
-    currentViewUser: null as any,
+    showUserRankBtn: false,
+    showDrawer: false,
+    currentUserId: 0,
   },
 
   onLoad() {
-    const user = wx.getStorageSync('user')
-    if (user) {
-      this.setData({ user })
-    }
-    this.fetchUserRank()
   },
 
   onShow() {
-    // 刷新用户信息
-    const user = wx.getStorageSync('user')
-    if (user && user.id) {
-      getUserInfo(user.id)
-        .then((dto) => {
-          const updatedUser = convertUserDTO(dto)
-          wx.setStorageSync('user', updatedUser)
-          this.setData({ user: updatedUser })
-        })
-        .catch(() => {})
+    const user: User = wx.getStorageSync('user')
+    if (user) {
+      this.setData({ user })
     }
-  },
 
-  // 刷新用户信息
-  refreshUser() {
-    const user = this.data.user
-    if (user && user.id) {
-      getUserInfo(user.id)
-        .then((dto) => {
-          const updatedUser = convertUserDTO(dto)
-          wx.setStorageSync('user', updatedUser)
-          this.setData({ user: updatedUser })
-        })
-        .catch(() => {})
-    }
-  },
-
-  // === 视图切换 ===
-  switchToRank() {
-    this.setData({
-      showUserRank: true,
-      showGameLog: false,
-      showUserGameLog: false,
-    })
+    this.fetchUserInfo()
     this.fetchUserRank()
   },
 
-  switchToGameLog() {
-    this.setData({
-      showUserRank: false,
-      showGameLog: true,
-      showUserGameLog: false,
-      gameLogList: [],
-      gameLogOffset: 0,
-      gameLogHasMore: true,
-    })
+  // 子组件下拉刷新触发
+  handleRankListLoad() {
+    this.fetchUserInfo()
+    this.fetchUserRank()
+  },
+  handleGameListLoad() {
+    this.fetchUserInfo()
     this.fetchGameList(false)
   },
 
@@ -97,99 +59,97 @@ Page({
       })
   },
 
-  // 点击排行榜头像 → 切换到个人对局视图
-  onClickUserAvatar(e: any) {
-    const user = e.detail
-    this.setData({
-      showUserRank: false,
-      showGameLog: false,
-      showUserGameLog: true,
-      currentViewUser: user,
-      userGameLogList: [],
-      userGameLogOffset: 0,
-      userGameLogHasMore: true,
-    })
-    this.fetchUserGameList(user.id, false)
-  },
+  fetchGameList(isLoadMore: boolean = false) {
+    if (this.data.isLoadingMore) return
 
-  // === 全局对局记录 ===
-  fetchGameList(isLoadMore: boolean) {
-    if (isLoadMore && !this.data.gameLogHasMore) {
-      this.notifyComponentLoadMoreComplete('game-log')
-      return
+    const page = isLoadMore ? this.data.currentPage + 1 : 0
+    const offset = page * this.data.pageSize
+
+    if (isLoadMore) {
+      this.setData({ isLoadingMore: true })
     }
 
-    const offset = isLoadMore ? this.data.gameLogOffset : 0
     const currentUserId = this.data.user ? this.data.user.id : 0
-
-    getGameList(PAGE_SIZE, offset)
+    getGameList(this.data.pageSize, offset)
       .then((dtos) => {
         const avatars = wx.getStorageSync('avatars') || []
-        let logs = dtos.map((dto: GameDTO) => {
+        const formattedList = dtos.map((dto: GameDTO) => {
           const log = convertGameDTO(dto, currentUserId)
-          // 更新头像缓存
-          if (avatars.length > 0) {
-            this.updateLogAvatars(log, avatars)
-          }
+          if (avatars.length > 0) this.updateLogAvatars(log, avatars)
           return log
         })
 
-        if (isLoadMore) {
-          logs = [...this.data.gameLogList, ...logs]
-        }
+        const newGameList = isLoadMore ? [...this.data.gameList, ...formattedList] : formattedList
+        const hasMoreData = formattedList.length > 0 && formattedList.length === this.data.pageSize
 
         this.setData({
-          gameLogList: logs,
-          gameLogOffset: offset + dtos.length,
-          gameLogHasMore: dtos.length >= PAGE_SIZE,
+          gameList: newGameList,
+          currentPage: page,
+          hasMoreData,
+          isLoadingMore: false,
         })
-        this.notifyComponentLoadMoreComplete('game-log')
+        this.notifyComponentLoadMoreComplete()
       })
       .catch((err) => {
         console.error('获取对局记录失败:', err)
-        this.notifyComponentLoadMoreComplete('game-log')
+        this.setData({ isLoadingMore: false })
+        this.notifyComponentLoadMoreComplete()
       })
   },
 
-  // === 个人对局记录 ===
-  fetchUserGameList(userId: number, isLoadMore: boolean) {
-    if (isLoadMore && !this.data.userGameLogHasMore) {
-      this.notifyComponentLoadMoreComplete('user-game-log')
-      return
+  fetchUserInfo() {
+    if (!this.data.user || !this.data.user.id) return
+    getUserInfo(this.data.user.id)
+      .then((dto) => {
+        const updatedUser = convertUserDTO(dto)
+        wx.setStorageSync('user', updatedUser)
+        this.setData({ user: updatedUser })
+      })
+      .catch(() => {})
+  },
+
+  fetchUserGameList(userId: number, isLoadMore: boolean = false) {
+    if (this.data.isLoadingMore && isLoadMore) return
+    if (!isLoadMore) {
+      this.setData({ currentUserId: userId })
     }
 
-    const offset = isLoadMore ? this.data.userGameLogOffset : 0
-    const currentUserId = this.data.user ? this.data.user.id : 0
+    const page = isLoadMore ? this.data.currentPage + 1 : 0
+    const offset = page * this.data.pageSize
 
-    getGameListByUser(userId, PAGE_SIZE, offset)
+    if (isLoadMore) {
+      this.setData({ isLoadingMore: true })
+    }
+
+    const currentUserId = this.data.user ? this.data.user.id : 0
+    const targetUserId = isLoadMore ? this.data.currentUserId : userId
+
+    getGameListByUser(targetUserId, this.data.pageSize, offset)
       .then((dtos) => {
         const avatars = wx.getStorageSync('avatars') || []
-        let logs = dtos.map((dto: GameDTO) => {
+        const formattedList = dtos.map((dto: GameDTO) => {
           const log = convertGameDTO(dto, currentUserId)
           log.forOnePlayer = true
-          log.playerWin = dto.players.some(
-            (p: any) => p.user.id === userId && p.role_code === 1
-          )
-          if (avatars.length > 0) {
-            this.updateLogAvatars(log, avatars)
-          }
+          log.playerWin = dto.players.some((p: any) => p.user.id === targetUserId && p.role_code === 1)
+          if (avatars.length > 0) this.updateLogAvatars(log, avatars)
           return log
         })
 
-        if (isLoadMore) {
-          logs = [...this.data.userGameLogList, ...logs]
-        }
+        const newUserGameList = isLoadMore ? [...this.data.userGameList, ...formattedList] : formattedList
+        const hasMoreData = formattedList.length > 0 && formattedList.length === this.data.pageSize
 
         this.setData({
-          userGameLogList: logs,
-          userGameLogOffset: offset + dtos.length,
-          userGameLogHasMore: dtos.length >= PAGE_SIZE,
+          userGameList: newUserGameList,
+          currentPage: page,
+          hasMoreData,
+          isLoadingMore: false,
         })
-        this.notifyComponentLoadMoreComplete('user-game-log')
+        this.notifyComponentLoadMoreComplete()
       })
       .catch((err) => {
         console.error('获取个人对局记录失败:', err)
-        this.notifyComponentLoadMoreComplete('user-game-log')
+        this.setData({ isLoadingMore: false })
+        this.notifyComponentLoadMoreComplete()
       })
   },
 
@@ -211,85 +171,79 @@ Page({
   },
 
   // 通知子组件加载更多完成
-  notifyComponentLoadMoreComplete(componentId: string) {
-    const comp = this.selectComponent(`#${componentId}`) as any
-    if (comp && comp.loadMoreComplete) {
-      comp.loadMoreComplete()
+  notifyComponentLoadMoreComplete() {
+    this.setData({ isLoadingMore: false })
+    try {
+      let componentId = ''
+      if (this.data.showGameLog) componentId = '#game-log-component'
+      else if (this.data.showUserGameLog) componentId = '#user-game-log-component'
+      if (!componentId) return
+      const component = this.selectComponent(componentId) as any
+      if (component && component.loadMoreComplete) component.loadMoreComplete()
+    } catch (e) {
+      console.error('notifyComponentLoadMoreComplete failed:', e)
     }
   },
 
-  // === 事件处理 ===
   handleLoadMore() {
     if (this.data.showGameLog) {
       this.fetchGameList(true)
-    } else if (this.data.showUserGameLog && this.data.currentViewUser) {
-      this.fetchUserGameList(this.data.currentViewUser.id, true)
+    } else if (this.data.showUserGameLog && this.data.currentUserId) {
+      this.fetchUserGameList(this.data.currentUserId, true)
     }
   },
 
-  handleDeleteLog(e: any) {
-    const { gameId } = e.detail
-    wx.showModal({
-      title: '确认删除',
-      content: '确定要删除这条对局记录吗？',
-      success: (res) => {
-        if (res.confirm) {
-          cancelGame(gameId)
-            .then(() => {
-              wx.showToast({ title: '已删除', icon: 'success' })
-              // 刷新当前视图
-              this.refreshCurrentView()
-            })
-            .catch((err) => {
-              console.error('删除失败:', err)
-              wx.showToast({ title: '删除失败', icon: 'none' })
-            })
-        }
-      },
+  openUserRank() {
+    this.fetchUserInfo()
+    this.fetchUserRank()
+    this.setData({
+      showUserRank: true,
+      showGameLog: false,
+      showUserGameLog: false,
+      showUserRankBtn: false,
+      currentPage: 0,
+      hasMoreData: true,
     })
   },
 
-  handleRefreshGameLog() {
+  openGameLog() {
+    this.fetchUserInfo()
+    this.fetchGameList(false)
     this.setData({
-      gameLogList: [],
-      gameLogOffset: 0,
-      gameLogHasMore: true,
+      showUserRank: false,
+      showGameLog: true,
+      showUserGameLog: false,
+      showUserRankBtn: true,
+      currentPage: 0,
+      hasMoreData: true,
     })
+  },
+
+  handleClickUserAvatar(e: any) {
+    const userId = e.detail.userId
+    this.fetchUserGameList(userId, false)
+    this.setData({
+      showUserRank: false,
+      showGameLog: false,
+      showUserGameLog: true,
+      showUserRankBtn: true,
+      currentPage: 0,
+      hasMoreData: true,
+    })
+  },
+
+  refreshData() {
+    this.fetchUserInfo()
+    this.fetchUserRank()
     this.fetchGameList(false)
   },
 
-  handleRefreshUserGameLog() {
-    if (this.data.currentViewUser) {
-      this.setData({
-        userGameLogList: [],
-        userGameLogOffset: 0,
-        userGameLogHasMore: true,
-      })
-      this.fetchUserGameList(this.data.currentViewUser.id, false)
-    }
+  showSaveGameLog() {
+    this.setData({ showDrawer: true })
   },
 
-  // 打开记分面板
-  openGamePanel() {
-    const comp = this.selectComponent('#majiang-game') as any
-    if (comp && comp.openPanel) {
-      comp.openPanel()
-    }
-  },
-
-  // 记录完成后刷新
-  onGameRecorded() {
-    this.refreshUser()
-    this.refreshCurrentView()
-  },
-
-  refreshCurrentView() {
-    if (this.data.showUserRank) {
-      this.fetchUserRank()
-    } else if (this.data.showGameLog) {
-      this.handleRefreshGameLog()
-    } else if (this.data.showUserGameLog && this.data.currentViewUser) {
-      this.handleRefreshUserGameLog()
-    }
+  // mgtt-mp 由组件内处理删除；这里保留一个入口给后续兼容使用
+  deleteGame(gameId: number) {
+    return cancelGame(gameId)
   },
 })

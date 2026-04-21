@@ -1,11 +1,24 @@
 Component({
   properties: {
-    user: { type: Object, value: null },
+    username: {
+      type: String,
+      value: '游客',
+    },
+    points: {
+      type: Number,
+      value: 0,
+    },
+    avatar: {
+      type: String,
+      value: '',
+    },
   },
 
   methods: {
-    goToSettings() {
-      wx.navigateTo({ url: '/pages/update/index' })
+    onSettingsClick() {
+      wx.navigateTo({
+        url: '../update/index',
+      })
     },
   },
 })
