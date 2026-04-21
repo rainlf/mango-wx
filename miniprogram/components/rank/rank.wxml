@@ -15,11 +15,18 @@
       
       <!-- 头像 -->
       <image
+        wx:if="{{item.avatar}}"
         class="rank-avatar"
-        src="{{item.avatar || '/images/background.png'}}"
+        src="{{item.avatar}}"
         data-user="{{item}}"
         bindtap="onAvatarTap"
       ></image>
+      <view
+        wx:else
+        class="rank-avatar rank-avatar-placeholder"
+        data-user="{{item}}"
+        bindtap="onAvatarTap"
+      ></view>
       
       <!-- 昵称和标签 -->
       <view class="rank-info">

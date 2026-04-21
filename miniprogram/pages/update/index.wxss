@@ -47,6 +47,10 @@
   height: 100%;
 }
 
+.avatar-placeholder {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
 .avatar-tip {
   color: rgba(255, 255, 255, 0.5);
   font-size: 24rpx;

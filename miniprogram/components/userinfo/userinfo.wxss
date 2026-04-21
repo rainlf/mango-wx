@@ -12,6 +12,10 @@
   border: 3rpx solid rgba(255, 255, 255, 0.2);
 }
 
+.userinfo-avatar-placeholder {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
 .userinfo-detail {
   flex: 1;
   display: flex;
