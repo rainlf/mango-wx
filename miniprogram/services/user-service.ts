@@ -36,11 +36,11 @@ export const updateUsername = (userId: number, nickname: string): Promise<any> =
       header: { 'content-type': 'application/x-www-form-urlencoded' },
       data: `userId=${userId}&nickname=${encodeURIComponent(nickname)}`,
       success: (res) => {
-        const response = res.data as ApiResponse<any>
-        if (response.success) {
+        const response = res.data as any
+        if (response.code === 0) {
           resolve(response.data)
         } else {
-          reject(response.message)
+          reject(response.message || '请求失败')
         }
       },
       fail: () => reject('网络连接失败'),
@@ -63,7 +63,7 @@ export const uploadUserInfo = (userId: number, nickname: string, avatarPath: str
       success(res) {
         try {
           const data = JSON.parse(res.data)
-          if (data.success) {
+          if (data.code === 0) {
             resolve(data.data)
           } else {
             reject(data.message || '上传失败')

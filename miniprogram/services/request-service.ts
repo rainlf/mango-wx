@@ -28,9 +28,10 @@ export const request = <T>(options: RequestOptions): Promise<T> => {
       ...options,
       url: fullUrl,
       success: (res) => {
-        const response = res.data as ApiResponse<T>
-        if (response.success) {
-          resolve(response.data)
+        const response = res.data as any
+        // 后端返回格式: { code: 0, message: "success", data: ... }
+        if (response.code === 0) {
+          resolve(response.data as T)
         } else {
           reject(response.message || '请求失败')
         }

@@ -92,7 +92,7 @@ interface GamePlayerDTO {
 interface UserDTO {
   id: number;
   nickname: string;
-  avatar: string;
+  avatar_url: string;
   open_id: string;
   total_points: number;
   total_games: number;

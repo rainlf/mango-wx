@@ -1,3 +1,5 @@
+import { getServer } from '../services/request-service'
+
 export const formatTime = (date: Date) => {
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -18,11 +20,22 @@ const formatNumber = (n: number) => {
   return s[1] ? s : '0' + s
 }
 
+const normalizeAssetURL = (url?: string): string => {
+  if (!url) return ''
+  if (url.startsWith('http://') || url.startsWith('https://') || url.startsWith('data:')) {
+    return url
+  }
+  if (url.startsWith('/')) {
+    return `${getServer()}${url}`
+  }
+  return url
+}
+
 // 从缓存中更新头像
 export const updateAvatarFromCache = (userId: number, avatars: any[]): string | null => {
   if (!avatars || avatars.length === 0) return null
   const userInfo = avatars.find((item: any) => item.id === userId)
-  return userInfo ? userInfo.avatar : null
+  return userInfo ? normalizeAssetURL(userInfo.avatar) : null
 }
 
 // 将后端 UserDTO 转为前端 User 结构
@@ -31,7 +44,7 @@ export const convertUserDTO = (dto: UserDTO): User => {
     id: dto.id,
     username: dto.nickname || '',
     nickname: dto.nickname || '',
-    avatar: dto.avatar || '',
+    avatar: normalizeAssetURL(dto.avatar_url),
     points: dto.total_points || 0,
     totalGames: dto.total_games || 0,
     winCount: dto.win_count || 0,
