@@ -21,10 +21,10 @@
         <view class="log-header">
           <text class="log-type">{{item.type}}</text>
           <view class="log-players-row">
-            <image class="log-player-avatar" src="{{item.player1.avatar || '/images/background.png'}}"></image>
-            <image class="log-player-avatar" src="{{item.player2.avatar || '/images/background.png'}}"></image>
-            <image class="log-player-avatar" src="{{item.player3.avatar || '/images/background.png'}}"></image>
-            <image class="log-player-avatar" src="{{item.player4.avatar || '/images/background.png'}}"></image>
+            <image class="log-player-avatar" src="{{item.player1.avatar}}"></image>
+            <image class="log-player-avatar" src="{{item.player2.avatar}}"></image>
+            <image class="log-player-avatar" src="{{item.player3.avatar}}"></image>
+            <image class="log-player-avatar" src="{{item.player4.avatar}}"></image>
           </view>
           <text class="log-time">{{item.createdTime}}</text>
           <image
@@ -39,7 +39,7 @@
         <!-- 赢家区域 -->
         <view class="log-winners" wx:if="{{item.winners.length > 0}}">
           <view class="log-winner-item" wx:for="{{item.winners}}" wx:for-item="winner" wx:key="index">
-            <image class="log-item-avatar" src="{{winner.user.avatar || '/images/background.png'}}"></image>
+            <image class="log-item-avatar" src="{{winner.user.avatar}}"></image>
             <view class="log-item-info">
               <text class="log-item-name">{{winner.user.nickname || winner.user.username}}</text>
               <view class="log-item-tags" wx:if="{{winner.tags.length > 0}}">
@@ -53,7 +53,7 @@
         <!-- 输家区域 -->
         <view class="log-losers" wx:if="{{item.losers.length > 0}}">
           <view class="log-loser-item" wx:for="{{item.losers}}" wx:for-item="loser" wx:key="index">
-            <image class="log-item-avatar" src="{{loser.user.avatar || '/images/background.png'}}"></image>
+            <image class="log-item-avatar" src="{{loser.user.avatar}}"></image>
             <view class="log-item-info">
               <text class="log-item-name">{{loser.user.nickname || loser.user.username}}</text>
             </view>

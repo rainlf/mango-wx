@@ -1,3 +1,5 @@
+<image class="page-bg" src="/images/background.png" mode="aspectFill"></image>
+<view class="page-bg-mask"></view>
 <view class="page-container">
   <!-- 用户信息卡片 -->
   <userinfo user="{{user}}" bind:refreshUser="refreshUser"></userinfo>
