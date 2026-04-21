@@ -40,21 +40,16 @@
                     </view>
                 </view>
             </view>
-            <!-- 第一部分：标题+换人按钮 -->
-            <view class="section-header">
-                <block wx:if="{{gameType === '相公'}}">
-                    <text class="section-title-user">🦆 选择相公</text>
-                </block>
-                <block wx:else>
-                    <text class="section-title-user">🙂 选择赢家</text>
-                </block>
-                <text wx:if="{{!changingPlayers && gameType !== '运动'}}" class="replace-btn" bindtap="startChangePlayers">🔄 牌桌换人</text>
-                <text wx:elif="{{changingPlayers}}" class="replace-btn" bindtap="stopChangePlayers">🍄 确认</text>
-            </view>
-
-            <!-- 第二部分：玩家列表 -->
             <block wx:if="{{!changingPlayers}}">
-                <!-- 赢家列表 -->
+                <view class="section-header">
+                    <block wx:if="{{gameType === '相公'}}">
+                        <text class="section-title-user">🦆 选择相公</text>
+                    </block>
+                    <block wx:else>
+                        <text class="section-title-user">🙂 选择赢家</text>
+                    </block>
+                    <text wx:if="{{gameType !== '运动'}}" class="replace-btn" bindtap="startChangePlayers">🔄 牌桌换人</text>
+                </view>
                 <view class="players-grid">
                     <block wx:if="{{gameType === '运动'}}">
                         <view class="player-card active last-active">
@@ -161,6 +156,7 @@
                                             class="tile-btn {{item.selected ? 'active' : ''}}"
                                             bindtap="toggleWinType"
                                             data-name="{{item.name}}"
+                                            data-code="{{item.code}}"
                                             data-multi="{{item.multi}}"
                                             data-selected="{{item.selected}}"
                                             data-userId="{{user.id}}"
@@ -194,6 +190,30 @@
                 </block>
             </block>
             <block wx:else>
+                <view class="section-header">
+                    <text class="section-title-user">🎴 当前牌桌</text>
+                    <text class="replace-btn" bindtap="cancelChangePlayers">取消换人</text>
+                </view>
+                <view class="table-players-grid">
+                    <view
+                            wx:for="{{currentTablePlayers}}"
+                            wx:key="index"
+                            class="table-player-card {{item.empty ? 'empty' : 'filled'}}"
+                    >
+                        <block wx:if="{{!item.empty}}">
+                            <image class="player-avatar" src="{{item.avatar}}"/>
+                            <text class="player-name">{{item.username}}</text>
+                        </block>
+                        <block wx:else>
+                            <view class="empty-seat-icon">+</view>
+                            <text class="empty-seat-text">空位</text>
+                        </block>
+                    </view>
+                </view>
+                <view class="section-header section-header-secondary">
+                    <text class="section-title-user">👥 选择牌桌玩家</text>
+                    <text class="section-subtitle">已选 {{selectUserToPlayList.length}} / 4</text>
+                </view>
                 <scroll-view scroll-y class="scroll-view-container">
                     <view class="all-players-grid">
                         <view
@@ -213,9 +233,14 @@
 
         </view>
 
-        <view wx:if="{{showButton}}" class="drawer-content-bottom">
+        <view class="drawer-content-bottom">
+            <block wx:if="{{changingPlayers}}">
+                <view class="btn confirm-wide" bindtap="saveCurrentPlayers">确认当前牌桌人员</view>
+            </block>
+            <block wx:else>
             <view class="btn cancel" bindtap="closeDrawer">取消</view>
             <view class="btn confirm" bindtap="showSubmit">确认提交</view>
+            </block>
         </view>
     </view>
 </view>

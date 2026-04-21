@@ -55,8 +55,10 @@
     flex-direction: row;
     align-items: center;
     gap: 32rpx;
-    margin: 48rpx 0;
+    margin: 32rpx 0;
     width: 100%;
+    padding: 0 24rpx calc(16rpx + env(safe-area-inset-bottom));
+    box-sizing: border-box;
 }
 
 .btn {
@@ -77,6 +79,17 @@
     background: #f5f5f5;
     color: #666;
     margin: 20rpx 10rpx 20rpx 20rpx
+}
+
+.confirm-wide {
+    width: 100%;
+    background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+    color: #fff;
+    margin: 12rpx 0;
+    border-radius: 999rpx;
+    box-shadow: 0 8rpx 24rpx rgba(33, 150, 243, 0.25);
+    font-size: 30rpx;
+    font-weight: 600;
 }
 
 /* 新增样式 */
@@ -146,7 +159,7 @@
     color: #2196F3;
     padding: 8rpx 16rpx;
     border-radius: 8rpx;
-    margin-left: 10rpx;
+    margin-left: auto;
 }
 
 .replace-btn:active {
@@ -154,6 +167,53 @@
 }
 
 /* 第二部分：玩家列表 */
+.table-players-grid {
+    width: 90%;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16rpx;
+    padding: 12rpx 0 24rpx;
+}
+
+.table-player-card {
+    min-height: 170rpx;
+    border-radius: 18rpx;
+    background: rgba(248, 249, 250, 0.95);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 16rpx 10rpx;
+    box-shadow: 0 4rpx 12rpx rgba(15, 23, 42, 0.06);
+}
+
+.table-player-card.filled {
+    border: 2rpx solid rgba(33, 150, 243, 0.12);
+}
+
+.table-player-card.empty {
+    border: 2rpx dashed rgba(148, 163, 184, 0.35);
+    color: #94a3b8;
+}
+
+.empty-seat-icon {
+    width: 72rpx;
+    height: 72rpx;
+    border-radius: 50%;
+    background: rgba(226, 232, 240, 0.85);
+    color: #64748b;
+    font-size: 44rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12rpx;
+}
+
+.empty-seat-text {
+    font-size: 22rpx;
+    color: #94a3b8;
+}
+
 .players-grid {
     width: 90%;
     display: flex;
@@ -193,12 +253,11 @@
 }
 
 .all-players-grid {
-    /*width: 100%;*/
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     flex-wrap: wrap;
-    padding: 20rpx 0;
-    /*align-content: flex-start;*/
+    gap: 16rpx;
+    padding: 20rpx 8rpx 8rpx;
 }
 
 .all-player-card {
@@ -212,8 +271,17 @@
 
 .all-player-card.active {
     background: #e3f2fd;
-    color: white;
     box-shadow: 0 4rpx 12rpx rgba(33, 150, 243, 0.3);
+}
+
+.section-header-secondary {
+    margin-top: 8rpx;
+}
+
+.section-subtitle {
+    margin-left: auto;
+    font-size: 24rpx;
+    color: #64748b;
 }
 
 
@@ -275,10 +343,8 @@
 }
 
 .scroll-view-container {
-    height: 900rpx;
-    display: flex;
-    align-items: center;
-    justify-content: center; /* 新增属性，使元素水平居中 */
+    width: 90%;
+    height: 520rpx;
 }
 
 /* 内容行布局 */

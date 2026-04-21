@@ -59,10 +59,7 @@ export const convertUserDTO = (dto: UserDTO): User => {
 
 // 将后端 GameDTO 转为前端 MajiangLog 结构
 export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog => {
-  // 按座位排序获取4个玩家
-  const sortedPlayers = [...dto.players]
-    .filter(p => p.role_code !== 3) // 排除纯记录者角色
-    .sort((a, b) => a.seat - b.seat)
+  const dtoPlayers = Array.isArray(dto.players) ? dto.players : []
   
   // 如果不足4人（运动类型等），用空用户补齐
   const emptyUser: User = {
@@ -72,7 +69,7 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
     gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
   }
 
-  const allParticipants = dto.players.filter(p => p.role_code === 1 || p.role_code === 2 || p.role_code === 4)
+  const allParticipants = dtoPlayers.filter(p => p.role_code === 1 || p.role_code === 2 || p.role_code === 4)
   const playerList = allParticipants.sort((a, b) => a.seat - b.seat)
 
   const player1 = playerList[0] ? convertUserDTO(playerList[0].user) : emptyUser
@@ -81,7 +78,7 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
   const player4 = playerList[3] ? convertUserDTO(playerList[3].user) : emptyUser
 
   // 构建赢家列表
-  const winners: MajiangLogItem[] = dto.players
+  const winners: MajiangLogItem[] = dtoPlayers
     .filter(p => p.role_code === 1)
     .map(p => ({
       user: convertUserDTO(p.user),
@@ -90,7 +87,7 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
     }))
 
   // 构建输家列表
-  const losers: MajiangLogItem[] = dto.players
+  const losers: MajiangLogItem[] = dtoPlayers
     .filter(p => p.role_code === 2)
     .map(p => ({
       user: convertUserDTO(p.user),
@@ -109,7 +106,7 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
   }
 
   // 找到记录者
-  const recorderPlayer = dto.players.find(p => p.role_code === 3) || dto.players[0]
+  const recorderPlayer = dtoPlayers.find(p => p.role_code === 3) || dtoPlayers[0]
   const recorder: MajiangLogItem = {
     user: recorderPlayer ? convertUserDTO(recorderPlayer.user) : emptyUser,
     points: recorderPlayer ? recorderPlayer.final_points : 0,
@@ -120,7 +117,7 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
   const deleteIcon = (recorderPlayer && recorderPlayer.user.id === currentUserId) ? '/images/delete.png' : ''
 
   // 是否为当前用户的个人视图下的对局
-  const currentPlayerInGame = dto.players.find(p => p.user.id === currentUserId)
+  const currentPlayerInGame = dtoPlayers.find(p => p.user.id === currentUserId)
   const playerWin = currentPlayerInGame ? currentPlayerInGame.role_code === 1 : false
 
   return {

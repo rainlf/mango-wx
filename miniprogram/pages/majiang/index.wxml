@@ -1,4 +1,6 @@
 <block>
+  <image class="page-bg" src="/images/background.png" mode="aspectFill" />
+  <view class="page-bg-mask"></view>
   <view class="container">
     <view class="top-container">
       <!-- userinfo 组件 -->
@@ -51,7 +53,7 @@
     </view>
 
     <view class="game-container">
-      <majiang-game showDrawer="{{showDrawer}}" bind:refreshData="refreshData" />
+      <majiang-game showDrawer="{{showDrawer}}" bind:refreshData="refreshData" bind:closeDrawer="handleCloseDrawer" />
     </view>
   </view>
 </block>

@@ -1,4 +1,4 @@
-import { getMajiangPlayers, saveMaJiangGame } from '../../services/majiang-service'
+import { getMajiangPlayers, saveMaJiangGame, updatePlayers } from '../../services/majiang-service'
 
 Component({
   properties: {
@@ -10,11 +10,11 @@ Component({
   data: {
     gameType: '胡牌', // 默认选中胡牌
     allPlayers: [] as User[],
+    currentTablePlayers: [] as any[],
     winPlayers: [] as User[],
     losePlayers: [] as User[],
     changingPlayers: false,
     selectUserToPlayList: [] as number[],
-    showButton: true,
 
     // 底分
     points: [
@@ -28,15 +28,15 @@ Component({
 
     // 牌型
     winTypes: [
-      { name: '一条龙', multi: 2, selected: false },
-      { name: '大吊车', multi: 2, selected: false },
-      { name: '碰碰胡', multi: 2, selected: false },
-      { name: '门前清', multi: 2, selected: false },
-      { name: '混一色', multi: 2, selected: false },
-      { name: '清一色', multi: 4, selected: false },
-      { name: '小七对', multi: 4, selected: false },
-      { name: '龙七对', multi: 8, selected: false },
-      { name: '杠开花', multi: 2, selected: false },
+      { code: 'yi_tiao_long', name: '一条龙', multi: 2, selected: false },
+      { code: 'da_diao_che', name: '大吊车', multi: 2, selected: false },
+      { code: 'peng_peng_hu', name: '碰碰胡', multi: 2, selected: false },
+      { code: 'men_qian_qing', name: '门前清', multi: 2, selected: false },
+      { code: 'hun_yi_se', name: '混一色', multi: 2, selected: false },
+      { code: 'qing_yi_se', name: '清一色', multi: 4, selected: false },
+      { code: 'xiao_qi_dui', name: '小七对', multi: 4, selected: false },
+      { code: 'long_qi_dui', name: '龙七对', multi: 8, selected: false },
+      { code: 'gang_kai_hua', name: '杠开花', multi: 2, selected: false },
     ],
   },
   observers: {
@@ -48,73 +48,91 @@ Component({
   },
 
   methods: {
-    // 数据初始化
-    loadData() {
-      getMajiangPlayers().then((res) => {
-        // 场上玩家
-        const currentPlayers = res.currentPlayers
-
-        // 场上玩家ids
-        const currentIds = currentPlayers.map((player: User) => player.id)
-
-        // 获取当前用户信息
-        const recorder = wx.getStorageSync('user')
-
-        // 赢家 - 如果当前是运动类型，只显示当前用户
-        let winPlayers
-        if (this.data.gameType === '运动') {
-          // 优先从allPlayers中查找当前用户
-          const allPlayers = res.allPlayers
-          const recorderPlayer = allPlayers.find((player: User) => player.id === recorder.id)
-
-          if (recorderPlayer) {
-            winPlayers = [
-              {
-                ...recorderPlayer,
-                selected: true,
-                lastSelected: true,
-                gameInfo: {
-                  basePoints: 10,
-                  winTypes: [],
-                  multi: 1,
-                },
-              },
-            ]
-          } else {
-            // 如果找不到匹配的记录者用户，创建一个默认用户
-            winPlayers = [
-              {
-                id: recorder.id || 0,
-                username: recorder.username || '当前用户',
-                avatar: recorder.avatar || '/images/background.png',
-                selected: true,
-                lastSelected: true,
-                gameInfo: {
-                  basePoints: 10,
-                  winTypes: [],
-                  multi: 1,
-                },
-              },
-            ]
-          }
-        } else {
-          // 其他类型显示所有当前玩家
-          winPlayers = currentPlayers.map((player: User, index: number) => ({
-            ...player,
-            selected: index === 0,
-            lastSelected: index === 0,
-            gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
-          }))
+    buildTablePlayers(selectedIds: number[], preferredPlayers: User[] = []) {
+      const playerMap = new Map<number, User>()
+      preferredPlayers.forEach((player: User) => {
+        playerMap.set(player.id, player)
+      })
+      this.data.allPlayers.forEach((player: User) => {
+        if (!playerMap.has(player.id)) {
+          playerMap.set(player.id, player)
         }
-        const selectedWinPlayerId = winPlayers.filter((x: any) => x.selected)[0].id
+      })
 
-        // 输家
-        const losePlayers = currentPlayers.filter((x: any) => x.id !== selectedWinPlayerId).map((player: User) => ({
+      const selectedPlayers = selectedIds
+        .map((id: number) => playerMap.get(id))
+        .filter((player: User | undefined): player is User => !!player)
+
+      const tablePlayers = selectedPlayers.map((player: User) => ({
+        ...player,
+        empty: false,
+      }))
+
+      while (tablePlayers.length < 4) {
+        tablePlayers.push({
+          id: 0,
+          username: '空位',
+          avatar: '',
+          empty: true,
+        })
+      }
+
+      return tablePlayers.slice(0, 4)
+    },
+
+    createGamePlayers(gameType: string, players: User[], allPlayers: User[]) {
+      const recorder = wx.getStorageSync('user')
+      let winPlayers: User[] = []
+
+      if (gameType === '运动') {
+        const recorderPlayer = allPlayers.find((player: User) => player.id === recorder.id)
+        if (recorderPlayer) {
+          winPlayers = [
+            {
+              ...recorderPlayer,
+              selected: true,
+              lastSelected: true,
+              gameInfo: { basePoints: 10, winTypes: [], multi: 1 },
+            },
+          ]
+        } else {
+          winPlayers = [
+            {
+              id: recorder.id || 0,
+              username: recorder.username || '当前用户',
+              avatar: recorder.avatar || '',
+              selected: true,
+              lastSelected: true,
+              gameInfo: { basePoints: 10, winTypes: [], multi: 1 },
+            } as User,
+          ]
+        }
+      } else {
+        winPlayers = players.map((player: User, index: number) => ({
+          ...player,
+          selected: index === 0,
+          lastSelected: index === 0,
+          gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
+        }))
+      }
+
+      const selectedWinPlayer = winPlayers.find((player: any) => player.selected)
+      const selectedWinPlayerId = selectedWinPlayer ? selectedWinPlayer.id : 0
+      const losePlayers = players
+        .filter((player: User) => player.id !== selectedWinPlayerId)
+        .map((player: User) => ({
           ...player,
           selected: false,
         }))
 
-        // 全部玩家
+      return { winPlayers, losePlayers }
+    },
+
+    // 数据初始化
+    loadData() {
+      getMajiangPlayers().then((res) => {
+        const currentPlayers = res.currentPlayers
+        const currentIds = currentPlayers.map((player: User) => player.id)
         const allPlayers = res.allPlayers.map((player: User) => {
           if (currentIds.includes(player.id)) {
             return { ...player, selected: true }
@@ -123,11 +141,17 @@ Component({
           }
         })
 
+        const currentTablePlayers = this.buildTablePlayers(currentIds, currentPlayers)
+        const activePlayers = currentTablePlayers.filter((player: any) => !player.empty) as User[]
+        const { winPlayers, losePlayers } = this.createGamePlayers(this.data.gameType, activePlayers, allPlayers)
+
         this.setData({
           winPlayers,
           losePlayers,
           allPlayers,
+          currentTablePlayers,
           selectUserToPlayList: currentIds,
+          changingPlayers: false,
         })
       })
     },
@@ -228,22 +252,23 @@ Component({
 
     toggleWinType(e: any) {
       const name = e.currentTarget.dataset.name
+      const code = e.currentTarget.dataset.code
       const multi = e.currentTarget.dataset.multi
       const selected = e.currentTarget.dataset.selected
       const userId = e.currentTarget.dataset.userid
 
       this.setData({
-        winTypes: this.data.winTypes.map((type: any) => (type.name === name ? { ...type, selected: !type.selected } : type)),
+        winTypes: this.data.winTypes.map((type: any) => (type.code === code ? { ...type, selected: !type.selected } : type)),
         winPlayers: this.data.winPlayers.map((player: User) => {
           if (player.id === userId) {
             let totalMulti = player.gameInfo.multi
             let totalWinTypes = player.gameInfo.winTypes
             if (selected) {
               totalMulti /= multi
-              totalWinTypes = totalWinTypes.filter((x: string) => x !== name)
+              totalWinTypes = totalWinTypes.filter((x: string) => x !== code)
             } else {
               totalMulti *= multi
-              totalWinTypes = [...totalWinTypes, name]
+              totalWinTypes = [...totalWinTypes, code]
             }
             return {
               ...player,
@@ -263,54 +288,14 @@ Component({
 
       const data: any = {
         gameType: type,
-        winPlayers:
-          type === '运动'
-            ? (() => {
-                const recorderPlayer = this.data.allPlayers.find((player: User) => player.id === recorder.id)
-                if (recorderPlayer) {
-                  return [
-                    {
-                      ...recorderPlayer,
-                      selected: true,
-                      lastSelected: true,
-                      gameInfo: {
-                        basePoints: 10,
-                        winTypes: [],
-                        multi: 1,
-                      },
-                    },
-                  ]
-                }
-                return [
-                  {
-                    id: recorder.id || 0,
-                    username: recorder.username || '当前用户',
-                    avatar: recorder.avatar || '/images/background.png',
-                    selected: true,
-                    lastSelected: true,
-                    gameInfo: {
-                      basePoints: 10,
-                      winTypes: [],
-                      multi: 1,
-                    },
-                  },
-                ]
-              })()
-            : this.data.allPlayers
-                .filter((player: User) => this.data.selectUserToPlayList.includes(player.id))
-                .map((player: User, index: number) => ({
-                  ...player,
-                  selected: index === 0,
-                  lastSelected: index === 0,
-                  gameInfo: {
-                    basePoints: 0,
-                    winTypes: [],
-                    multi: 1,
-                  },
-                })),
         points: this.data.points.map((point: any) => ({ ...point, selected: false })),
         winTypes: this.data.winTypes.map((winType: any) => ({ ...winType, selected: false })),
       }
+
+      const activePlayers = this.data.currentTablePlayers.filter((player: any) => !player.empty) as User[]
+      const { winPlayers, losePlayers } = this.createGamePlayers(type, activePlayers, this.data.allPlayers)
+      data.winPlayers = winPlayers
+      data.losePlayers = losePlayers
 
       if (type === '运动') {
         data.points = this.data.points.map((point: any) => ({
@@ -381,7 +366,7 @@ Component({
             })),
             winTypes: this.data.winTypes.map((winType: any) => ({
               ...winType,
-              selected: targetWinTypes.includes(winType.name),
+              selected: targetWinTypes.includes(winType.code),
             })),
           })
         }
@@ -441,18 +426,16 @@ Component({
         })
         return
       }
+      let nextSelectedIds = [...this.data.selectUserToPlayList]
       if (this.data.selectUserToPlayList.includes(playerId)) {
-        let temp = [...this.data.selectUserToPlayList]
-        temp.splice(this.data.selectUserToPlayList.indexOf(playerId), 1)
-        this.setData({
-          selectUserToPlayList: [...temp],
-        })
+        nextSelectedIds.splice(this.data.selectUserToPlayList.indexOf(playerId), 1)
       } else {
-        this.setData({
-          selectUserToPlayList: [...this.data.selectUserToPlayList, playerId],
-        })
+        nextSelectedIds = [...nextSelectedIds, playerId]
       }
+      const currentTablePlayers = this.buildTablePlayers(nextSelectedIds)
       this.setData({
+        selectUserToPlayList: nextSelectedIds,
+        currentTablePlayers,
         allPlayers: this.data.allPlayers.map((player: User) => {
           if (player.id === playerId) {
             return { ...player, selected: !player.selected }
@@ -463,29 +446,24 @@ Component({
       })
     },
     startChangePlayers() {
-      this.setData({
-        changingPlayers: true,
-        showButton: false,
-      })
-    },
-    stopChangePlayers() {
       if (this.data.gameType === '运动') {
         wx.showToast({
-          title: '运动类型不允许更换玩家',
+          title: '先切换到麻将对局类型再换人',
           icon: 'none',
           duration: 1000,
         })
-        this.setData({
-          changingPlayers: false,
-          showButton: true,
-        })
         return
       }
-
-      const selectUser = this.data.allPlayers
-        .filter((player: User) => this.data.selectUserToPlayList.includes(player.id))
-        .map((player: User) => ({ ...player, selected: false }))
-      if (selectUser.length !== 4) {
+      this.setData({
+        changingPlayers: true,
+      })
+    },
+    cancelChangePlayers() {
+      this.loadData()
+    },
+    saveCurrentPlayers() {
+      const selectedIds = this.data.selectUserToPlayList
+      if (selectedIds.length !== 4) {
         wx.showToast({
           title: '游戏需要 4 名玩家哦 😏',
           icon: 'none',
@@ -493,25 +471,33 @@ Component({
         })
         return
       }
-      this.setData({
-        changingPlayers: false,
-        showButton: true,
-        winPlayers: selectUser.map((player: User, index: number) => ({
-          ...player,
-          selected: index === 0,
-          lastSelected: index === 0,
-          gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
-        })),
-        losePlayers: [...selectUser],
+      wx.showLoading({ title: '保存中...' })
+      updatePlayers(selectedIds).then(() => {
+        wx.hideLoading()
+        wx.showToast({
+          title: '牌桌人员已更新',
+          icon: 'success',
+          duration: 1200,
+        })
+        this.loadData()
+      }).catch((err) => {
+        wx.hideLoading()
+        wx.showToast({
+          title: typeof err === 'string' ? err : '保存失败',
+          icon: 'none',
+          duration: 1200,
+        })
       })
     },
 
     closeDrawer() {
       this.setData({
         showDrawer: false,
+        changingPlayers: false,
         points: this.data.points.map((point: any) => ({ ...point, selected: false })),
         winTypes: this.data.winTypes.map((winType: any) => ({ ...winType, selected: false })),
       })
+      this.triggerEvent('closeDrawer')
     },
 
     showSubmit() {

@@ -4,7 +4,31 @@ page {
   display: flex;
   flex-direction: column;
   position: relative;
-  background-color: #f5f5f5;
+  background: transparent;
+}
+
+.page-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+}
+
+.page-bg-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.08) 0%,
+    rgba(255, 255, 255, 0.14) 45%,
+    rgba(255, 255, 255, 0.22) 100%
+  );
 }
 
 .container {
@@ -13,6 +37,7 @@ page {
   display: flex;
   flex-direction: column;
   position: relative;
+  z-index: 1;
 }
 
 .top-container {
@@ -25,15 +50,17 @@ page {
 }
 
 .bottom-container {
-  padding: 20rpx;
-  padding-bottom: 60rpx;
+  padding: 20rpx 24rpx calc(8rpx + env(safe-area-inset-bottom));
   width: 100%;
   box-shadow: 0 -4rpx 12rpx rgba(0, 0, 0, 0.05);
   display: flex;
+  gap: 20rpx;
   position: absolute;
   bottom: 0;
   left: 0;
-  background-color: #fff;
+  right: 0;
+  box-sizing: border-box;
+  background-color: rgba(255, 255, 255, 0.92);
 }
 
 .rank {
@@ -42,7 +69,6 @@ page {
 
 .start-btn {
   flex: 1;
-  margin-left: 20rpx;
   background: linear-gradient(135deg, #ffd700 0%, #ffb600 100%);
   box-shadow: 0 6rpx 18rpx rgba(255, 215, 0, 0.3);
   color: #fff;
@@ -54,12 +80,16 @@ page {
 
 .history-btn {
   flex: 1;
-  margin-right: 20rpx;
   background: linear-gradient(135deg, #4a90e2 0%, #0066cc 100%);
   box-shadow: 0 6rpx 18rpx rgba(74, 144, 226, 0.3);
   color: #fff;
   border-radius: 48rpx;
   font-size: 32rpx;
   font-weight: bold;
+  border: none;
+}
+
+.start-btn::after,
+.history-btn::after {
   border: none;
 }

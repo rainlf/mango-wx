@@ -73,7 +73,8 @@ Page({
     getGameList(this.data.pageSize, offset)
       .then((dtos) => {
         const avatars = wx.getStorageSync('avatars') || []
-        const formattedList = dtos.map((dto: GameDTO) => {
+        const validDtos = dtos.filter((dto: GameDTO) => Array.isArray(dto.players) && dto.players.length > 0)
+        const formattedList = validDtos.map((dto: GameDTO) => {
           const log = convertGameDTO(dto, currentUserId)
           if (avatars.length > 0) this.updateLogAvatars(log, avatars)
           return log
@@ -127,7 +128,8 @@ Page({
     getGameListByUser(targetUserId, this.data.pageSize, offset)
       .then((dtos) => {
         const avatars = wx.getStorageSync('avatars') || []
-        const formattedList = dtos.map((dto: GameDTO) => {
+        const validDtos = dtos.filter((dto: GameDTO) => Array.isArray(dto.players) && dto.players.length > 0)
+        const formattedList = validDtos.map((dto: GameDTO) => {
           const log = convertGameDTO(dto, currentUserId)
           log.forOnePlayer = true
           log.playerWin = dto.players.some((p: any) => p.user.id === targetUserId && p.role_code === 1)
@@ -240,6 +242,10 @@ Page({
 
   showSaveGameLog() {
     this.setData({ showDrawer: true })
+  },
+
+  handleCloseDrawer() {
+    this.setData({ showDrawer: false })
   },
 
   // mgtt-mp 由组件内处理删除；这里保留一个入口给后续兼容使用

@@ -1,4 +1,5 @@
 import { request } from './request-service'
+import { convertUserDTO } from '../utils/util'
 
 // 获取全局对局记录
 export const getGameList = (limit: number, offset: number): Promise<GameDTO[]> => {
@@ -38,8 +39,8 @@ export const getPlayers = (): Promise<PlayersResponse> => {
 
 export const getMajiangPlayers = (): Promise<MajiangPlayers> => {
   return getPlayers().then((res) => ({
-    currentPlayers: res.current_players || [],
-    allPlayers: res.all_players || [],
+    currentPlayers: (res.current_players || []).map((item: UserDTO) => convertUserDTO(item)),
+    allPlayers: (res.all_players || []).map((item: UserDTO) => convertUserDTO(item)),
   }))
 }
 
