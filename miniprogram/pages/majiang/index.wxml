@@ -1,0 +1,54 @@
+<view class="page-container">
+  <!-- 用户信息卡片 -->
+  <userinfo user="{{user}}" bind:refreshUser="refreshUser"></userinfo>
+
+  <!-- 排行榜视图 -->
+  <rank
+    wx:if="{{showUserRank}}"
+    rankList="{{rankList}}"
+    bind:clickUserAvatar="onClickUserAvatar"
+    bind:refresh="fetchUserRank"
+  ></rank>
+
+  <!-- 全局对局记录 -->
+  <majiang-log
+    wx:if="{{showGameLog}}"
+    id="game-log"
+    logList="{{gameLogList}}"
+    title="对局记录"
+    bind:loadMore="handleLoadMore"
+    bind:deleteLog="handleDeleteLog"
+    bind:refresh="handleRefreshGameLog"
+  ></majiang-log>
+
+  <!-- 个人对局记录 -->
+  <majiang-log
+    wx:if="{{showUserGameLog}}"
+    id="user-game-log"
+    logList="{{userGameLogList}}"
+    title="{{currentViewUser.nickname || currentViewUser.username}}的对局"
+    bind:loadMore="handleLoadMore"
+    bind:deleteLog="handleDeleteLog"
+    bind:refresh="handleRefreshUserGameLog"
+  ></majiang-log>
+
+  <!-- 底部操作栏 -->
+  <view class="bottom-bar">
+    <view class="bar-btn {{showUserRank ? 'active' : ''}}" bindtap="switchToRank">
+      <text>排行榜</text>
+    </view>
+    <view class="bar-btn {{showGameLog ? 'active' : ''}}" bindtap="switchToGameLog">
+      <text>对局记录</text>
+    </view>
+    <view class="bar-btn record-btn" bindtap="openGamePanel">
+      <text>开始记录</text>
+    </view>
+  </view>
+
+  <!-- 游戏记录抽屉 -->
+  <majiang-game
+    id="majiang-game"
+    user="{{user}}"
+    bind:gameRecorded="onGameRecorded"
+  ></majiang-game>
+</view>

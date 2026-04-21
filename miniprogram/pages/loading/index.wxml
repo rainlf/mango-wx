@@ -1,0 +1,6 @@
+<view class="container">
+  <view class="progress-bar">
+    <view class="progress-bar-inner" style="width: {{progress}}%;"></view>
+  </view>
+  <text class="loading-text">{{loadingText}}</text>
+</view>

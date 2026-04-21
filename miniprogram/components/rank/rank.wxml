@@ -1,0 +1,40 @@
+<scroll-view
+  scroll-y
+  class="rank-container"
+  refresher-enabled
+  bindrefresherrefresh="onRefresh"
+  refresher-triggered="{{isRefreshing}}"
+>
+  <view class="rank-list">
+    <view class="rank-item" wx:for="{{rankList}}" wx:key="id">
+      <!-- 排名 -->
+      <view class="rank-badge">
+        <image wx:if="{{index < 3}}" class="rank-crown" src="/images/king{{index + 1}}.png"></image>
+        <text wx:else class="rank-number">{{index + 1}}</text>
+      </view>
+      
+      <!-- 头像 -->
+      <image
+        class="rank-avatar"
+        src="{{item.avatar || '/images/background.png'}}"
+        data-user="{{item}}"
+        bindtap="onAvatarTap"
+      ></image>
+      
+      <!-- 昵称和标签 -->
+      <view class="rank-info">
+        <text class="rank-name">{{item.nickname || item.username}}</text>
+        <view class="rank-tags" wx:if="{{item.lastTags.length > 0}}">
+          <text class="rank-tag" wx:for="{{item.lastTags}}" wx:for-item="tag" wx:key="*this">{{tag}}</text>
+        </view>
+      </view>
+      
+      <!-- 积分 -->
+      <text class="rank-points {{item.points >= 0 ? 'positive' : 'negative'}}">{{item.points}}</text>
+    </view>
+  </view>
+  
+  <view class="empty-tip" wx:if="{{rankList.length === 0}}">
+    <text>暂无排名数据</text>
+  </view>
+</scroll-view>

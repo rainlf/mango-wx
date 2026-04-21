@@ -1,0 +1,37 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  background-color: #2c3e50;
+  padding-bottom: 120rpx;
+}
+
+.bottom-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  height: 100rpx;
+  background-color: #34495e;
+  border-top: 1rpx solid rgba(255, 255, 255, 0.1);
+  z-index: 100;
+}
+
+.bar-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 28rpx;
+}
+
+.bar-btn.active {
+  color: #3498db;
+}
+
+.bar-btn.record-btn {
+  color: #2ecc71;
+  font-weight: bold;
+}

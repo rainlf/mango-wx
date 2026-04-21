@@ -1,0 +1,8 @@
+<view class="userinfo-card">
+  <image class="userinfo-avatar" src="{{user.avatar || '/images/background.png'}}"></image>
+  <view class="userinfo-detail">
+    <text class="userinfo-name">{{user.nickname || user.username || '未设置昵称'}}</text>
+    <text class="userinfo-points">积分: {{user.points || 0}}</text>
+  </view>
+  <image class="userinfo-settings" src="/images/gears.png" bindtap="goToSettings"></image>
+</view>
