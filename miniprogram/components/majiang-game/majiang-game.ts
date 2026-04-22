@@ -116,10 +116,10 @@ Component({
     },
 
     createGamePlayers(_gameType: string, players: User[], _allPlayers: User[]) {
-      const winPlayers = players.map((player: User, index: number) => ({
+      const winPlayers = players.map((player: User) => ({
         ...player,
         selected: false,
-        lastSelected: index === 0,
+        lastSelected: false,
         gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
       }))
 
@@ -127,6 +127,7 @@ Component({
         .map((player: User) => ({
           ...player,
           selected: false,
+          disabled: false,
         }))
 
       return { winPlayers, losePlayers }
@@ -369,24 +370,28 @@ Component({
 
       const selectedPlayerId: number[] = this.data.winPlayers.filter((player: User) => player.selected).map((player: User) => player.id)
       this.setData({
-        losePlayers: this.data.winPlayers.filter((x: User) => !selectedPlayerId.includes(x.id)).map((player: User) => ({
+        losePlayers: this.data.winPlayers.map((player: User) => ({
           ...player,
-          selected: false,
+          selected: selectedPlayerId.includes(player.id)
+            ? false
+            : !!this.data.losePlayers.find((losePlayer: any) => losePlayer.id === player.id && losePlayer.selected),
+          disabled: selectedPlayerId.includes(player.id),
         })),
       })
     },
     selectLosePlayer(e: any) {
       const playerId = e.currentTarget.dataset.id
+      const disabled = e.currentTarget.dataset.disabled
+      const selected = e.currentTarget.dataset.selected
 
-      const winIds = this.data.winPlayers.filter((player: User) => player.selected).map((player: User) => player.id)
-      if (winIds.includes(playerId)) {
+      if (disabled) {
         return
       }
 
       this.setData({
         losePlayers: this.data.losePlayers.map((player: User) => {
           if (player.id === playerId) {
-            return { ...player, selected: true }
+            return { ...player, selected: !selected }
           } else {
             return { ...player, selected: false }
           }

@@ -47,7 +47,7 @@
                     <view
                             wx:for="{{winPlayers}}"
                             wx:key="id"
-                            class="player-card {{item.selected ? 'active' : ''}} {{item.lastSelected ? 'last-active' : ''}}"
+                            class="player-card winner-card {{item.selected ? 'winner-selected' : ''}}"
                             bindtap="selectWinPlayer"
                             data-id="{{item.id}}"
                             data-selected="{{item.selected}}"
@@ -162,10 +162,11 @@
                         <view
                                 wx:for="{{losePlayers}}"
                                 wx:key="id"
-                                class="player-card {{item.selected ? 'active' : ''}} {{item.selected ? 'last-active' : ''}}"
+                                class="player-card loser-card {{item.selected ? 'loser-selected' : ''}} {{item.disabled ? 'disabled-card' : ''}}"
                                 bindtap="selectLosePlayer"
                                 data-id="{{item.id}}"
                                 data-selected="{{item.selected}}"
+                                data-disabled="{{item.disabled}}"
                         >
                             <image class="player-avatar" src="{{item.avatar}}"/>
                             <text class="player-name">{{item.username}}</text>

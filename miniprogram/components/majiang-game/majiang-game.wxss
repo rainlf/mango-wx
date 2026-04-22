@@ -229,27 +229,49 @@
     padding: 20rpx;
     border-radius: 16rpx;
     background: #f8f9fa;
+    border: 2rpx solid transparent;
     transition: all 0.2s;
     margin: 5rpx;
 }
 
-.player-card.active {
-    background: #e3f2fd;
-    box-shadow: 0 4rpx 12rpx rgba(33, 150, 243, 0.15);
+.winner-card.winner-selected {
+    background: #ecfdf3;
+    border-color: #22c55e;
+    box-shadow: 0 4rpx 12rpx rgba(34, 197, 94, 0.18);
 }
 
-.player-card.last-active {
-    border: 2rpx solid mediumpurple; /* 紫色边框 */
-    box-shadow: 0 2rpx 8rpx rgba(156, 39, 176, 0.2); /* 可选浅紫色投影 */
-    transform: translateY(-2rpx); /* 可选悬浮效果 */
-    transition: all 0.2s; /* 保持与默认卡片的过渡动画一致 */
+.loser-card.loser-selected {
+    background: #fef2f2;
+    border-color: #ef4444;
+    box-shadow: 0 4rpx 12rpx rgba(239, 68, 68, 0.16);
+}
+
+.player-card.focused {
+    border-color: #8b5cf6;
+    box-shadow: 0 6rpx 16rpx rgba(139, 92, 246, 0.22);
+    transform: translateY(-2rpx);
 }
 
 .detail-box.last-active {
-    border: 2rpx solid mediumpurple; /* 紫色边框 */
-    box-shadow: 0 2rpx 8rpx rgba(156, 39, 176, 0.2); /* 可选浅紫色投影 */
-    transform: translateY(-2rpx); /* 可选悬浮效果 */
-    transition: all 0.2s; /* 保持与默认卡片的过渡动画一致 */
+    border: 2rpx solid #8b5cf6;
+    box-shadow: 0 6rpx 16rpx rgba(139, 92, 246, 0.18);
+    transform: translateY(-2rpx);
+    transition: all 0.2s;
+}
+
+.disabled-card {
+    background: #f1f5f9;
+    border-color: #cbd5e1;
+    opacity: 0.55;
+    filter: grayscale(0.2);
+}
+
+.disabled-card .player-name {
+    color: #94a3b8;
+}
+
+.disabled-card .player-avatar {
+    opacity: 0.7;
 }
 
 .all-players-grid {
