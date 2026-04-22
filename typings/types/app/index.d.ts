@@ -33,7 +33,6 @@ interface MajiangLog {
   type: string;
   typeCode: number;
   status: number;
-  sessionId: number;
   player1: User;
   player2: User;
   player3: User;
@@ -65,7 +64,6 @@ interface MajiangPlayers {
 // 后端返回的原始 GameDTO
 interface GameDTO {
   id: number;
-  session_id: number;
   type: string;
   type_code: number;
   status: number;

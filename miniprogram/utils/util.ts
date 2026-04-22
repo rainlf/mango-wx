@@ -133,7 +133,6 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
     type: dto.type,
     typeCode: dto.type_code,
     status: dto.status,
-    sessionId: dto.session_id,
     player1,
     player2,
     player3,
