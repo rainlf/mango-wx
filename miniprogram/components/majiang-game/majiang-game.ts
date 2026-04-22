@@ -46,8 +46,43 @@ Component({
       }
     },
   },
-
   methods: {
+    getInitialPoints() {
+      return [
+        { name: 3, point: 3, selected: false },
+        { name: 4, point: 4, selected: false },
+        { name: 5, point: 5, selected: false },
+        { name: 6, point: 6, selected: false },
+        { name: 7, point: 7, selected: false },
+        { name: '🍒', point: 10, selected: false },
+      ]
+    },
+
+    getInitialWinTypes() {
+      return [
+        { code: 'yi_tiao_long', name: '一条龙', multi: 2, selected: false },
+        { code: 'da_diao_che', name: '大吊车', multi: 2, selected: false },
+        { code: 'peng_peng_hu', name: '碰碰胡', multi: 2, selected: false },
+        { code: 'men_qian_qing', name: '门前清', multi: 2, selected: false },
+        { code: 'hun_yi_se', name: '混一色', multi: 2, selected: false },
+        { code: 'qing_yi_se', name: '清一色', multi: 4, selected: false },
+        { code: 'xiao_qi_dui', name: '小七对', multi: 4, selected: false },
+        { code: 'long_qi_dui', name: '龙七对', multi: 8, selected: false },
+        { code: 'gang_kai_hua', name: '杠开花', multi: 2, selected: false },
+      ]
+    },
+
+    resetFormState() {
+      this.setData({
+        gameType: '胡牌',
+        winPlayers: [],
+        losePlayers: [],
+        changingPlayers: false,
+        points: this.getInitialPoints(),
+        winTypes: this.getInitialWinTypes(),
+      })
+    },
+
     buildTablePlayers(selectedIds: number[], preferredPlayers: User[] = []) {
       const playerMap = new Map<number, User>()
       preferredPlayers.forEach((player: User) => {
@@ -80,18 +115,15 @@ Component({
       return tablePlayers.slice(0, 4)
     },
 
-    createGamePlayers(gameType: string, players: User[], allPlayers: User[]) {
+    createGamePlayers(_gameType: string, players: User[], _allPlayers: User[]) {
       const winPlayers = players.map((player: User, index: number) => ({
         ...player,
-        selected: index === 0,
+        selected: false,
         lastSelected: index === 0,
         gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
       }))
 
-      const selectedWinPlayer = winPlayers.find((player: any) => player.selected)
-      const selectedWinPlayerId = selectedWinPlayer ? selectedWinPlayer.id : 0
       const losePlayers = players
-        .filter((player: User) => player.id !== selectedWinPlayerId)
         .map((player: User) => ({
           ...player,
           selected: false,
@@ -102,6 +134,7 @@ Component({
 
     // 数据初始化
     loadData() {
+      this.resetFormState()
       getMajiangPlayers().then((res) => {
         const currentPlayers = res.currentPlayers
         const currentIds = currentPlayers.map((player: User) => player.id)
@@ -118,12 +151,15 @@ Component({
         const { winPlayers, losePlayers } = this.createGamePlayers(this.data.gameType, activePlayers, allPlayers)
 
         this.setData({
+          gameType: '胡牌',
           winPlayers,
           losePlayers,
           allPlayers,
           currentTablePlayers,
           selectUserToPlayList: currentIds,
           changingPlayers: false,
+          points: this.getInitialPoints(),
+          winTypes: this.getInitialWinTypes(),
         })
       })
     },
@@ -159,9 +195,9 @@ Component({
         points: this.data.points.map((item: any) => (item.name === name ? { ...item, selected: true } : { ...item, selected: false })),
         winPlayers: this.data.winPlayers.map((user: User) => {
           if (user.id === userId) {
-            return { ...user, selected: true, gameInfo: { ...user.gameInfo, basePoints: point } }
+            return { ...user, lastSelected: true, gameInfo: { ...user.gameInfo, basePoints: point } }
           } else {
-            return user
+            return { ...user, lastSelected: false }
           }
         }),
       })
@@ -185,9 +221,9 @@ Component({
       this.setData({
         winPlayers: this.data.winPlayers.map((player: User) => {
           if (player.id === userId) {
-            return { ...player, selected: true, gameInfo: { ...player.gameInfo, basePoints: target } }
+            return { ...player, lastSelected: true, gameInfo: { ...player.gameInfo, basePoints: target } }
           } else {
-            return player
+            return { ...player, lastSelected: false }
           }
         }),
         points: this.data.points.map((point: any) => ({ ...point, selected: point.point === target })),
@@ -212,9 +248,9 @@ Component({
       this.setData({
         winPlayers: this.data.winPlayers.map((player: User) => {
           if (player.id === userId) {
-            return { ...player, selected: true, gameInfo: { ...player.gameInfo, basePoints: target } }
+            return { ...player, lastSelected: true, gameInfo: { ...player.gameInfo, basePoints: target } }
           } else {
-            return player
+            return { ...player, lastSelected: false }
           }
         }),
         points: this.data.points.map((point: any) => ({ ...point, selected: point.point === target })),
@@ -243,11 +279,11 @@ Component({
             }
             return {
               ...player,
-              selected: true,
+              lastSelected: true,
               gameInfo: { ...player.gameInfo, winTypes: totalWinTypes, multi: totalMulti },
             }
           } else {
-            return player
+            return { ...player, lastSelected: false }
           }
         }),
       })
@@ -275,13 +311,8 @@ Component({
       const lastSelected = e.currentTarget.dataset.lastselected
 
       if (this.data.gameType === '胡牌') {
-        let count = 0
-        this.data.winPlayers.forEach((player: User) => {
-          if (player.selected) {
-            count++
-          }
-        })
-        if (selected === false && count >= 3) {
+        const selectedCount = this.data.winPlayers.filter((player: User) => player.selected).length
+        if (!selected && selectedCount >= 3) {
           wx.showToast({
             title: '最多 3 个赢家 😏',
             icon: 'none',
@@ -290,32 +321,18 @@ Component({
           return
         }
 
-        if (selected && lastSelected) {
-          this.setData({
-            winPlayers: this.data.winPlayers.map((player: User) =>
-              player.id === playerId ? { ...player, selected: false, lastSelected: false } : { ...player, lastSelected: false }
-            ),
-          })
-          let firstSelectId = -1
-          this.data.winPlayers.forEach((player: User) => {
-            if (firstSelectId === -1 && player.selected) {
-              firstSelectId = player.id
+        this.setData({
+          winPlayers: this.data.winPlayers.map((player: User) => {
+            if (player.id === playerId) {
+              return {
+                ...player,
+                selected: selected ? false : true,
+                lastSelected: true,
+              }
             }
-          })
-          if (firstSelectId !== -1) {
-            this.setData({
-              winPlayers: this.data.winPlayers.map((player: User) =>
-                player.id === firstSelectId ? { ...player, lastSelected: true } : player
-              ),
-            })
-          }
-        } else {
-          this.setData({
-            winPlayers: this.data.winPlayers.map((player: User) =>
-              player.id === playerId ? { ...player, selected: true, lastSelected: true } : { ...player, lastSelected: false }
-            ),
-          })
-        }
+            return { ...player, lastSelected: false }
+          }),
+        })
 
         if (!lastSelected) {
           const user = this.data.winPlayers.filter((x: User) => x.id === playerId)[0]
@@ -445,11 +462,9 @@ Component({
     },
 
     closeDrawer() {
+      this.resetFormState()
       this.setData({
         showDrawer: false,
-        changingPlayers: false,
-        points: this.data.points.map((point: any) => ({ ...point, selected: false })),
-        winTypes: this.data.winTypes.map((winType: any) => ({ ...winType, selected: false })),
       })
       this.triggerEvent('closeDrawer')
     },

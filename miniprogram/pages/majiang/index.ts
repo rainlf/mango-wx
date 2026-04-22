@@ -1,5 +1,5 @@
 import { getUserInfo, getUserRank } from '../../services/user-service'
-import { getGameList, getGameListByUser, cancelGame } from '../../services/majiang-service'
+import { getGameList, getGameListByUser, cancelGame, preloadMajiangPlayers } from '../../services/majiang-service'
 import { convertUserDTO, convertGameDTO, updateAvatarFromCache } from '../../utils/util'
 
 Page({
@@ -30,6 +30,9 @@ Page({
       this.setData({ user })
     }
 
+    preloadMajiangPlayers().catch((err) => {
+      console.error('预加载牌桌玩家失败:', err)
+    })
     this.fetchUserInfo()
     this.fetchUserRank()
   },

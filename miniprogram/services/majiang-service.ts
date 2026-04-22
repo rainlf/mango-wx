@@ -1,6 +1,9 @@
 import { request } from './request-service'
 import { convertUserDTO } from '../utils/util'
 
+let cachedMajiangPlayers: MajiangPlayers | null = null
+let majiangPlayersPromise: Promise<MajiangPlayers> | null = null
+
 // 获取全局对局记录
 export const getGameList = (limit: number, offset: number): Promise<GameDTO[]> => {
   return request<GameDTO[]>({
@@ -37,11 +40,43 @@ export const getPlayers = (): Promise<PlayersResponse> => {
   })
 }
 
-export const getMajiangPlayers = (): Promise<MajiangPlayers> => {
+const fetchMajiangPlayers = (): Promise<MajiangPlayers> => {
   return getPlayers().then((res) => ({
     currentPlayers: (res.current_players || []).map((item: UserDTO) => convertUserDTO(item)),
     allPlayers: (res.all_players || []).map((item: UserDTO) => convertUserDTO(item)),
   }))
+}
+
+export const clearMajiangPlayersCache = () => {
+  cachedMajiangPlayers = null
+  majiangPlayersPromise = null
+}
+
+export const getMajiangPlayers = (forceRefresh: boolean = false): Promise<MajiangPlayers> => {
+  if (forceRefresh) {
+    clearMajiangPlayersCache()
+  }
+  if (cachedMajiangPlayers) {
+    return Promise.resolve(cachedMajiangPlayers)
+  }
+  if (majiangPlayersPromise) {
+    return majiangPlayersPromise
+  }
+
+  majiangPlayersPromise = fetchMajiangPlayers()
+    .then((players) => {
+      cachedMajiangPlayers = players
+      return players
+    })
+    .finally(() => {
+      majiangPlayersPromise = null
+    })
+
+  return majiangPlayersPromise
+}
+
+export const preloadMajiangPlayers = (): Promise<MajiangPlayers> => {
+  return getMajiangPlayers()
 }
 
 // 更新牌桌玩家
@@ -51,6 +86,9 @@ export const updatePlayers = (userIds: number[]): Promise<any> => {
     method: 'POST',
     data: { user_ids: userIds },
     header: { 'content-type': 'application/json' },
+  }).then((res) => {
+    clearMajiangPlayersCache()
+    return res
   })
 }
 
