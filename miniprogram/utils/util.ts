@@ -69,7 +69,7 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
     gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
   }
 
-  const allParticipants = dtoPlayers.filter(p => p.role_code === 1 || p.role_code === 2 || p.role_code === 4)
+  const allParticipants = dtoPlayers.filter(p => p.role_code === 1 || p.role_code === 2 || p.role_code === 3 || p.role_code === 4)
   const playerList = allParticipants.sort((a, b) => a.seat - b.seat)
 
   const player1 = playerList[0] ? convertUserDTO(playerList[0].user) : emptyUser
@@ -106,15 +106,23 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
   }
 
   // 找到记录者
-  const recorderPlayer = dtoPlayers.find(p => p.role_code === 3) || dtoPlayers[0]
+  // 兼容两种来源：
+  // 1) 后端新增独立 RoleRecorder(3) 行承载“记录者奖励分”
+  // 2) 旧逻辑仅能通过 created_by + 玩家列表里同 user_id 的行推断
+  const recorderPlayer = dtoPlayers.find(p => p.role_code === 3) ||
+    dtoPlayers.find(p => p.user && dto.created_by && p.user.id === dto.created_by.id)
+  const recorderUser = dto.created_by
+    ? convertUserDTO(dto.created_by)
+    : (recorderPlayer && recorderPlayer.user ? convertUserDTO(recorderPlayer.user) : emptyUser)
+
   const recorder: MajiangLogItem = {
-    user: recorderPlayer ? convertUserDTO(recorderPlayer.user) : emptyUser,
+    user: recorderUser,
     points: recorderPlayer ? recorderPlayer.final_points : 0,
     tags: [],
   }
 
   // 删除图标：只有记录者本人可以删除
-  const deleteIcon = (recorderPlayer && recorderPlayer.user.id === currentUserId) ? '/images/delete.png' : ''
+  const deleteIcon = (recorderUser.id === currentUserId) ? '/images/delete.png' : ''
 
   // 是否为当前用户的个人视图下的对局
   const currentPlayerInGame = dtoPlayers.find(p => p.user.id === currentUserId)
