@@ -67,7 +67,7 @@
   display: flex;
   align-items: center;
   gap: 12rpx;
-  min-height: 60rpx;
+  min-height: 80rpx;
 }
 
 .identity-block {
@@ -75,12 +75,12 @@
   min-width: 0;
   display: flex;
   align-items: center;
-  min-height: 60rpx;
+  min-height: 80rpx;
   max-width: 220rpx;
 }
 
 .username {
-  font-size: 38rpx;
+  font-size: 40rpx;
   font-weight: 700;
   color: #1f2f45;
   line-height: 1.1;
@@ -93,8 +93,8 @@
 .points-box {
   flex: 1;
   min-width: 0;
-  height: 60rpx;
-  padding: 0 20rpx;
+  height: 80rpx;
+  padding: 0 21rpx;
   border-radius: 13rpx;
   background: linear-gradient(135deg, rgba(255, 251, 242, 0.98) 0%, rgba(255, 240, 204, 0.98) 100%);
   border: 1rpx solid rgba(255, 183, 77, 0.24);
@@ -110,7 +110,7 @@
 }
 
 .points-label {
-  font-size: 24rpx;
+  font-size: 25rpx;
   color: #7d6546;
   line-height: 1.15;
   font-weight: 500;
@@ -118,7 +118,7 @@
 }
 
 .points {
-  font-size: 42rpx;
+  font-size: 44rpx;
   color: #ff9900;
   font-weight: 700;
   line-height: 1;
