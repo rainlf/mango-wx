@@ -4,9 +4,9 @@ const getServer = (): string => {
     case 'develop':
       return 'http://localhost:8080'
     case 'trial':
-      return 'https://mp.guanshantech.com'
+      return 'https://wx.guanshantech.com'
     case 'release':
-      return 'https://mp.guanshantech.com'
+      return 'https://wx.guanshantech.com'
     default:
       return 'http://localhost:8080'
   }

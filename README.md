@@ -71,8 +71,8 @@ mango-wx
 接口服务地址在 `miniprogram/services/request-service.ts` 中按小程序环境自动切换：
 
 - `develop`：`http://localhost:8080`
-- `trial`：`https://mp.guanshantech.com`
-- `release`：`https://mp.guanshantech.com`
+- `trial`：`https://wx.guanshantech.com`
+- `release`：`https://wx.guanshantech.com`
 
 默认情况下，本地开发环境会请求本机 `8080` 端口后端服务。
 
