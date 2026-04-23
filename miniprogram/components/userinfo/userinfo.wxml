@@ -1,32 +1,46 @@
 <!-- components/userinfo/userinfo.wxml -->
 <view class="userinfo-container">
-  <image class="avatar" src="{{avatar}}" />
-  <view class="info-right">
-    <view class="profile-row">
-      <text class="username">{{username}}</text>
-      <view class="points-box">
-        <text class="points-label">当前积分</text>
-        <text class="points">{{points}}</text>
+  <view class="profile-card">
+    <view class="profile-main">
+      <view class="avatar-wrap">
+        <image class="avatar" src="{{avatar}}" />
+      </view>
+
+      <view class="info-right">
+        <view class="profile-header">
+          <view class="identity-block">
+            <text class="username">{{username}}</text>
+          </view>
+
+          <view class="header-actions">
+            <view class="points-box">
+              <text class="points-label">积分</text>
+              <text class="points">{{points}}</text>
+            </view>
+
+            <view class="settings-btn" catch:tap="onSettingsClick">
+              <image class="gear-icon" src="/images/gears.png" />
+            </view>
+          </view>
+        </view>
+
+        <view class="stats-panel">
+          <view class="stat-item">
+            <text class="stat-label">总场次</text>
+            <text class="stat-value">{{totalGames}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item">
+            <text class="stat-label">胜场</text>
+            <text class="stat-value">{{winCount}}</text>
+          </view>
+          <view class="stat-divider"></view>
+          <view class="stat-item stat-item-highlight">
+            <text class="stat-label">胜率</text>
+            <text class="stat-value stat-value-highlight">{{winRateText}}</text>
+          </view>
+        </view>
       </view>
     </view>
-
-    <view class="stats-grid">
-      <view class="stat-card">
-        <text class="stat-value">{{totalGames}}</text>
-        <text class="stat-label">总场次</text>
-      </view>
-      <view class="stat-card">
-        <text class="stat-value">{{winCount}}</text>
-        <text class="stat-label">胜场</text>
-      </view>
-      <view class="stat-card stat-card-highlight">
-        <text class="stat-value stat-value-highlight">{{winRateText}}</text>
-        <text class="stat-label">胜率</text>
-      </view>
-    </view>
-  </view>
-
-  <view class="settings-btn" catch:tap="onSettingsClick">
-    <image class="gear-icon" src="/images/gears.png" />
   </view>
 </view>
