@@ -1,14 +1,19 @@
+const ONLINE_SERVER = 'https://wx.guanshantech.com'
+const LOCAL_SERVER = 'http://localhost:8080'
+
 const getServer = (): string => {
   const envVersion = wx.getAccountInfoSync().miniProgram.envVersion
+  const { platform } = wx.getSystemInfoSync()
+
   switch (envVersion) {
     case 'develop':
-      return 'http://localhost:8080'
+      return platform === 'devtools' ? LOCAL_SERVER : ONLINE_SERVER
     case 'trial':
-      return 'https://wx.guanshantech.com'
+      return ONLINE_SERVER
     case 'release':
-      return 'https://wx.guanshantech.com'
+      return ONLINE_SERVER
     default:
-      return 'http://localhost:8080'
+      return LOCAL_SERVER
   }
 }
 
