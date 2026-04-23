@@ -2,10 +2,27 @@
 <view class="userinfo-container">
   <image class="avatar" src="{{avatar}}" />
   <view class="info-right">
-    <text class="username">{{username}}</text>
-    <view class="points-box">
-      <text class="points-label">当前积分：</text>
-      <text class="points">{{points}}</text>
+    <view class="profile-row">
+      <text class="username">{{username}}</text>
+      <view class="points-box">
+        <text class="points-label">当前积分</text>
+        <text class="points">{{points}}</text>
+      </view>
+    </view>
+
+    <view class="stats-grid">
+      <view class="stat-card">
+        <text class="stat-value">{{totalGames}}</text>
+        <text class="stat-label">总场次</text>
+      </view>
+      <view class="stat-card">
+        <text class="stat-value">{{winCount}}</text>
+        <text class="stat-label">胜场</text>
+      </view>
+      <view class="stat-card stat-card-highlight">
+        <text class="stat-value stat-value-highlight">{{winRateText}}</text>
+        <text class="stat-label">胜率</text>
+      </view>
     </view>
   </view>
 

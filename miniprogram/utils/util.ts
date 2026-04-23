@@ -48,6 +48,7 @@ export const convertUserDTO = (dto: UserDTO): User => {
     points: dto.total_points || 0,
     totalGames: dto.total_games || 0,
     winCount: dto.win_count || 0,
+    winRate: typeof dto.win_rate === 'number' ? dto.win_rate : 0,
     lastTags: [],
     createdTime: dto.created_at || '',
     updatedTime: dto.updated_at || '',
@@ -64,7 +65,7 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
   // 如果不足4人（运动类型等），用空用户补齐
   const emptyUser: User = {
     id: 0, username: '', nickname: '', avatar: '', points: 0,
-    totalGames: 0, winCount: 0, lastTags: [], createdTime: '', updatedTime: '',
+    totalGames: 0, winCount: 0, winRate: 0, lastTags: [], createdTime: '', updatedTime: '',
     selected: false, lastSelected: false,
     gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
   }

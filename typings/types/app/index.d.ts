@@ -11,6 +11,7 @@ interface User {
   points: number;
   totalGames: number;
   winCount: number;
+  winRate: number;
   lastTags: string[];
   createdTime: string;
   updatedTime: string;
