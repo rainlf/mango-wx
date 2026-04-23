@@ -31,7 +31,7 @@
 
 .profile-main {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 14rpx;
 }
 
@@ -44,7 +44,6 @@
   box-shadow: 0 6rpx 18rpx rgba(74, 144, 226, 0.1);
   flex-shrink: 0;
   box-sizing: border-box;
-  margin-top: 4rpx;
 }
 
 .avatar {
