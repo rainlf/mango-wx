@@ -80,11 +80,11 @@ export const preloadMajiangPlayers = (): Promise<MajiangPlayers> => {
 }
 
 // 更新牌桌玩家
-export const updatePlayers = (userIds: number[]): Promise<any> => {
+export const updatePlayers = (userId: number, userIds: number[]): Promise<any> => {
   return request<any>({
     url: '/api/game/players',
     method: 'POST',
-    data: { user_ids: userIds },
+    data: { user_id: userId, user_ids: userIds },
     header: { 'content-type': 'application/json' },
   }).then((res) => {
     clearMajiangPlayersCache()

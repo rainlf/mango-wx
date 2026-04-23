@@ -439,6 +439,7 @@ Component({
     },
     saveCurrentPlayers() {
       const selectedIds = this.data.selectUserToPlayList
+      const currentUser = wx.getStorageSync('user')
       if (selectedIds.length !== 4) {
         wx.showToast({
           title: '游戏需要 4 名玩家哦 😏',
@@ -447,8 +448,16 @@ Component({
         })
         return
       }
+      if (!currentUser || !currentUser.id) {
+        wx.showToast({
+          title: '用户信息异常',
+          icon: 'none',
+          duration: 1000,
+        })
+        return
+      }
       wx.showLoading({ title: '保存中...' })
-      updatePlayers(selectedIds).then(() => {
+      updatePlayers(currentUser.id, selectedIds).then(() => {
         wx.hideLoading()
         wx.showToast({
           title: '牌桌人员已更新',

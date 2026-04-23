@@ -95,6 +95,7 @@ interface UserDTO {
   total_points: number;
   total_games: number;
   win_count: number;
+  win_rate: number;
   created_at: string;
   updated_at: string;
 }
