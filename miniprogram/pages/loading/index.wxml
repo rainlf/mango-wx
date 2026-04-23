@@ -1,6 +1,14 @@
-<view class="container">
-  <view class="progress-bar">
-    <view class="progress-bar-inner" style="width: {{progress}}%;"></view>
+<view class="page">
+  <image class="page-bg" src="/images/background.png" mode="aspectFill" />
+  <view class="page-bg-mask"></view>
+  <view class="container">
+    <view class="brand-card">
+      <text class="brand-title">Mango 健身麻将</text>
+      <text class="brand-subtitle">记录每一局手气，也记住每一次翻盘</text>
+    </view>
+    <view class="progress-bar">
+      <view class="progress-bar-inner" style="width: {{progress}}%;"></view>
+    </view>
+    <text class="loading-text">{{loadingText}}</text>
   </view>
-  <text class="loading-text">{{loadingText}}</text>
 </view>
