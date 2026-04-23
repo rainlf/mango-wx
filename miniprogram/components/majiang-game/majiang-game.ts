@@ -116,10 +116,11 @@ Component({
     },
 
     createGamePlayers(_gameType: string, players: User[], _allPlayers: User[]) {
-      const winPlayers = players.map((player: User) => ({
+      const winPlayers = players.map((player: User, index: number) => ({
         ...player,
         selected: false,
-        lastSelected: false,
+        // 默认激活第一个牌桌玩家，保证首次打开时记分面板可见
+        lastSelected: index === 0,
         gameInfo: { basePoints: 0, winTypes: [], multi: 1 },
       }))
 
