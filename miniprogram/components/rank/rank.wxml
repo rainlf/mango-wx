@@ -54,7 +54,12 @@
                     <block wx:else>
                         <text class="score-text2">{{item.points}}</text>
                     </block>
-                    <text class="score-label">积分</text>
+                    <view class="score-meta">
+                        <view class="coin-icon coin-icon-sm">
+                            <view class="coin-icon-inner coin-icon-inner-sm"></view>
+                        </view>
+                        <text class="score-label">金币</text>
+                    </view>
                 </view>
             </view>
         </block>
