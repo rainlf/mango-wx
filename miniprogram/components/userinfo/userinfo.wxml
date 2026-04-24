@@ -13,7 +13,12 @@
           </view>
 
           <view class="points-box">
-            <text class="points-label">积分</text>
+            <view class="points-meta">
+              <view class="coin-icon">
+                <view class="coin-icon-inner"></view>
+              </view>
+              <text class="points-label">金币</text>
+            </view>
             <text class="points">{{points}}</text>
           </view>
 
