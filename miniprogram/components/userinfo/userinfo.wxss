@@ -183,17 +183,17 @@
 }
 
 .stats-panel .stat-item:nth-child(1) {
-  background: linear-gradient(180deg, #fff8ec 0%, #ffe6b8 100%);
-  border-color: rgba(255, 172, 47, 0.3);
-  box-shadow: 0 5rpx 12rpx rgba(255, 172, 47, 0.12);
+  background: linear-gradient(180deg, #effcff 0%, #d6f5ff 100%);
+  border-color: rgba(0, 162, 194, 0.22);
+  box-shadow: 0 4rpx 10rpx rgba(0, 162, 194, 0.08);
 }
 
 .stats-panel .stat-item:nth-child(1) .stat-label {
-  color: #7f8fa5;
+  color: #4f8b9c;
 }
 
 .stats-panel .stat-item:nth-child(1) .stat-value {
-  color: #25364e;
+  color: #0f6e82;
 }
 
 .stats-panel .stat-item:nth-child(2) {
