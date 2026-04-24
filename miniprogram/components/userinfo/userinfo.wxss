@@ -183,31 +183,31 @@
 }
 
 .stats-panel .stat-item:nth-child(1) {
+  background: linear-gradient(180deg, #f4fbf9 0%, #e3f5ef 100%);
+  border-color: rgba(82, 166, 145, 0.24);
+  box-shadow: 0 4rpx 10rpx rgba(82, 166, 145, 0.08);
+}
+
+.stats-panel .stat-item:nth-child(1) .stat-label {
+  color: #5f9286;
+}
+
+.stats-panel .stat-item:nth-child(1) .stat-value {
+  color: #2b7b67;
+}
+
+.stats-panel .stat-item:nth-child(2) {
   background: linear-gradient(180deg, #f7f5ff 0%, #ece8ff 100%);
   border-color: rgba(132, 118, 230, 0.24);
   box-shadow: 0 4rpx 10rpx rgba(132, 118, 230, 0.08);
 }
 
-.stats-panel .stat-item:nth-child(1) .stat-label {
+.stats-panel .stat-item:nth-child(2) .stat-label {
   color: #7d72be;
 }
 
-.stats-panel .stat-item:nth-child(1) .stat-value {
-  color: #5a4db0;
-}
-
-.stats-panel .stat-item:nth-child(2) {
-  background: linear-gradient(180deg, #f2fcf8 0%, #e4f7f0 100%);
-  border-color: rgba(66, 184, 145, 0.24);
-  box-shadow: 0 4rpx 10rpx rgba(66, 184, 145, 0.08);
-}
-
-.stats-panel .stat-item:nth-child(2) .stat-label {
-  color: #5e998b;
-}
-
 .stats-panel .stat-item:nth-child(2) .stat-value {
-  color: #1f8a70;
+  color: #5a4db0;
 }
 
 .stat-item-highlight {
