@@ -1,7 +1,21 @@
 <block>
   <image class="page-bg" src="/images/background.png" mode="aspectFill" />
   <view class="page-bg-mask"></view>
+  <scroll-view
+    class="page-scroll"
+    scroll-y
+    enhanced
+    refresher-enabled
+    refresher-default-style="none"
+    refresher-triggered="{{isPageRefreshing}}"
+    bindrefresherrefresh="onPageRefresh"
+  >
   <view class="container">
+    <view wx:if="{{isPageRefreshing}}" class="pull-refresh-tip">
+      <view class="pull-refresh-tip__spinner"></view>
+      <text class="pull-refresh-tip__text">正在刷新用户信息与排行</text>
+    </view>
+
     <view class="top-container">
       <!-- userinfo 组件 -->
       <userinfo
@@ -59,4 +73,5 @@
       <majiang-game showDrawer="{{showDrawer}}" bind:refreshData="refreshData" bind:closeDrawer="handleCloseDrawer" />
     </view>
   </view>
+  </scroll-view>
 </block>

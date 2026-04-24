@@ -6,6 +6,7 @@ Page({
   data: {
     user: {} as User,
     isRefreshing: false,
+    isPageRefreshing: false,
     isLoadingMore: false,
     hasMoreData: true,
     currentPage: 0,
@@ -37,6 +38,13 @@ Page({
     this.fetchUserRank()
   },
 
+  onPageRefresh() {
+    this.setData({ isPageRefreshing: true })
+    Promise.allSettled([this.fetchUserInfo(), this.fetchUserRank()]).finally(() => {
+      this.setData({ isPageRefreshing: false })
+    })
+  },
+
   // 子组件下拉刷新触发
   handleRankListLoad() {
     this.fetchUserInfo()
@@ -49,7 +57,7 @@ Page({
 
   // === 排行榜 ===
   fetchUserRank() {
-    getUserRank()
+    return getUserRank()
       .then((dtos) => {
         const rankList = dtos.map((dto: UserDTO) => convertUserDTO(dto))
         // 缓存头像
@@ -59,6 +67,7 @@ Page({
       })
       .catch((err) => {
         console.error('获取排行榜失败:', err)
+        throw err
       })
   },
 
@@ -102,14 +111,17 @@ Page({
   },
 
   fetchUserInfo() {
-    if (!this.data.user || !this.data.user.id) return
-    getUserInfo(this.data.user.id)
+    if (!this.data.user || !this.data.user.id) return Promise.resolve()
+    return getUserInfo(this.data.user.id)
       .then((dto) => {
         const updatedUser = convertUserDTO(dto)
         wx.setStorageSync('user', updatedUser)
         this.setData({ user: updatedUser })
       })
-      .catch(() => {})
+      .catch((err) => {
+        console.error('获取用户信息失败:', err)
+        throw err
+      })
   },
 
   fetchUserGameList(userId: number, isLoadMore: boolean = false) {
