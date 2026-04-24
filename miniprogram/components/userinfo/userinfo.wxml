@@ -36,9 +36,9 @@
             <text class="stat-label">胜场</text>
             <text class="stat-value">{{winCount}}</text>
           </view>
-          <view class="stat-item stat-item-highlight">
+          <view class="stat-item stat-item-highlight {{winRateNegative ? 'stat-item-negative' : ''}}">
             <text class="stat-label">胜率</text>
-            <text class="stat-value stat-value-highlight">{{winRateText}}</text>
+            <text class="stat-value stat-value-highlight {{winRateNegative ? 'stat-value-negative' : ''}}">{{winRateText}}</text>
           </view>
         </view>
       </view>
