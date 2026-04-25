@@ -30,7 +30,7 @@
 
       <block wx:if="{{showUserRank}}">
         <rank
-          class="rank"
+          class="content-panel"
           listData="{{rankList}}"
           bind:load="handleRankListLoad"
           bind:clickUserAvatar="handleClickUserAvatar"
@@ -39,6 +39,7 @@
 
       <block wx:if="{{showGameLog}}">
         <majiang-log
+          class="content-panel"
           id="game-log-component"
           listData="{{gameList}}"
           hasMoreData="{{hasMoreData}}"
@@ -50,6 +51,7 @@
 
       <block wx:if="{{showUserGameLog}}">
         <majiang-log
+          class="content-panel"
           id="user-game-log-component"
           listData="{{userGameList}}"
           hasMoreData="{{hasMoreData}}"
@@ -60,13 +62,26 @@
     </view>
 
     <view class="bottom-container">
-      <block wx:if="{{showUserRankBtn}}">
-        <button class="history-btn" catch:tap="openUserRank">玩家排行</button>
-      </block>
-      <block wx:else>
-        <button class="history-btn" catch:tap="openGameLog">对局记录</button>
-      </block>
-      <button class="start-btn" catch:tap="showSaveGameLog">开始记录</button>
+      <view
+        class="nav-btn nav-btn-rank {{showUserRank ? 'nav-btn-active nav-btn-rank-active' : ''}}"
+        catch:tap="openUserRank"
+      >
+        <text class="nav-btn-title">玩家排行</text>
+      </view>
+
+      <view
+        class="nav-btn nav-btn-history {{(showGameLog || showUserGameLog) ? 'nav-btn-active nav-btn-history-active' : ''}}"
+        catch:tap="openGameLog"
+      >
+        <text class="nav-btn-title">游戏历史</text>
+      </view>
+
+      <view
+        class="nav-btn nav-btn-record {{showDrawer ? 'nav-btn-active nav-btn-record-active' : ''}}"
+        catch:tap="openRecordGame"
+      >
+        <text class="nav-btn-title">记录游戏</text>
+      </view>
     </view>
 
     <view class="game-container">

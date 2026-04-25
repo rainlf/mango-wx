@@ -210,29 +210,45 @@ Page({
     }
   },
 
+  refreshRankPanel() {
+    return Promise.allSettled([this.fetchUserInfo(), this.fetchUserRank()])
+  },
+
+  refreshGameLogPanel() {
+    return Promise.allSettled([this.fetchUserInfo(), this.fetchGameList(false)])
+  },
+
   openUserRank() {
-    this.fetchUserInfo()
-    this.fetchUserRank()
     this.setData({
       showUserRank: true,
       showGameLog: false,
       showUserGameLog: false,
       showUserRankBtn: false,
+      showDrawer: false,
       currentPage: 0,
       hasMoreData: true,
+    }, () => {
+      this.refreshRankPanel()
     })
   },
 
   openGameLog() {
-    this.fetchUserInfo()
-    this.fetchGameList(false)
     this.setData({
       showUserRank: false,
       showGameLog: true,
       showUserGameLog: false,
       showUserRankBtn: true,
+      showDrawer: false,
       currentPage: 0,
       hasMoreData: true,
+    }, () => {
+      this.refreshGameLogPanel()
+    })
+  },
+
+  openRecordGame() {
+    this.setData({
+      showDrawer: true,
     })
   },
 
@@ -256,7 +272,7 @@ Page({
   },
 
   showSaveGameLog() {
-    this.setData({ showDrawer: true })
+    this.openRecordGame()
   },
 
   handleCloseDrawer() {
