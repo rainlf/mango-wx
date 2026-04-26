@@ -122,8 +122,8 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
     tags: [],
   }
 
-  // 删除图标：只有记录者本人可以删除
-  const deleteIcon = (recorderUser.id === currentUserId) ? '/images/delete.png' : ''
+  // 删除图标：本人显示可删除图标，其他人显示灰色禁用图标
+  const deleteIcon = (recorderUser.id === currentUserId) ? '/images/delete.png' : '/images/delete2.png'
 
   // 是否为当前用户的个人视图下的对局
   const currentPlayerInGame = dtoPlayers.find(p => p.user.id === currentUserId)
