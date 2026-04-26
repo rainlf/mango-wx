@@ -191,13 +191,13 @@
 }
 
 .win-tag {
-    color: #1e8f67;
-    background: rgba(33, 160, 110, 0.1);
+    color: #4f84c4;
+    background: rgba(111, 179, 255, 0.12);
 }
 
 .lose-tag {
-    color: #d44b5f;
-    background: rgba(237, 85, 101, 0.1);
+    color: #4f84c4;
+    background: rgba(111, 179, 255, 0.12);
 }
 
 .draw-tag {
