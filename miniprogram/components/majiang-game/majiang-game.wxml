@@ -5,218 +5,243 @@
 
     <!-- 抽屉主体 -->
     <view class="drawer-content">
-        <!-- 新增胡牌类型选择 -->
-        <view class="drawer-content-top">
-            <view class="win-type-selector">
-                <text class="selector-label">类型：</text>
-                <view class="type-buttons">
-                    <view
-                            class="type-btn {{gameType === '胡牌' ? 'active' : ''}}"
-                            bindtap="selectWinType"
-                            data-type="胡牌"
-                    >
-                        胡牌
-                    </view>
-                    <view
-                            class="type-btn {{gameType === '自摸' ? 'active' : ''}}"
-                            bindtap="selectWinType"
-                            data-type="自摸"
-                    >
-                        自摸
-                    </view>
-                    <view
-                            class="type-btn {{gameType === '相公' ? 'active' : ''}}"
-                            bindtap="selectWinType"
-                            data-type="相公"
-                    >
-                        相公
-                    </view>
-                </view>
+        <view class="drawer-handle"></view>
+        <view class="drawer-header">
+            <view class="drawer-header-text">
+                <text class="drawer-title">记录游戏</text>
             </view>
-            <block wx:if="{{!changingPlayers}}">
-                <view class="section-header">
-                    <block wx:if="{{gameType === '相公'}}">
-                        <text class="section-title-user">🦆 选择相公</text>
-                    </block>
-                    <block wx:else>
-                        <text class="section-title-user">🙂 选择赢家</text>
-                    </block>
-                    <text class="replace-btn" bindtap="startChangePlayers">🔄 牌桌换人</text>
+            <view class="drawer-close" bindtap="closeDrawer">关闭</view>
+        </view>
+
+        <scroll-view scroll-y class="drawer-scroll">
+            <view class="drawer-content-top">
+                <view class="panel-card selector-panel">
+                    <view class="panel-heading">
+                        <text class="panel-title">对局类型</text>
+                    </view>
+                    <view class="type-buttons">
+                        <view
+                                class="type-btn {{gameType === '胡牌' ? 'active' : ''}}"
+                                bindtap="selectWinType"
+                                data-type="胡牌"
+                        >
+                            胡牌
+                        </view>
+                        <view
+                                class="type-btn {{gameType === '自摸' ? 'active' : ''}}"
+                                bindtap="selectWinType"
+                                data-type="自摸"
+                        >
+                            自摸
+                        </view>
+                        <view
+                                class="type-btn {{gameType === '相公' ? 'active' : ''}}"
+                                bindtap="selectWinType"
+                                data-type="相公"
+                        >
+                            相公
+                        </view>
+                    </view>
                 </view>
-                <view class="players-grid">
-                    <view
+
+                <block wx:if="{{!changingPlayers}}">
+                    <view class="section-card">
+                        <view class="section-header">
+                            <block wx:if="{{gameType === '相公'}}">
+                                <text class="section-title-user">选择相公玩家</text>
+                            </block>
+                            <block wx:else>
+                                <text class="section-title-user">选择赢家</text>
+                            </block>
+                            <text class="replace-btn" bindtap="startChangePlayers">牌桌换人</text>
+                        </view>
+                        <view class="players-grid players-grid-four">
+                            <view
+                                    wx:for="{{winPlayers}}"
+                                    wx:key="id"
+                                    class="player-card winner-card {{item.selected ? 'winner-selected' : ''}} {{item.lastSelected ? 'player-card-focus' : ''}}"
+                                    bindtap="selectWinPlayer"
+                                    data-id="{{item.id}}"
+                                    data-selected="{{item.selected}}"
+                                    data-lastSelected="{{item.lastSelected}}"
+                            >
+                                <image class="player-avatar" src="{{item.avatar}}"/>
+                                <text class="player-name">{{item.username}}</text>
+                            </view>
+                        </view>
+                    </view>
+
+                    <block
+                            wx:if="{{gameType !== '相公'}}"
                             wx:for="{{winPlayers}}"
                             wx:key="id"
-                            class="player-card winner-card {{item.selected ? 'winner-selected' : ''}}"
-                            bindtap="selectWinPlayer"
-                            data-id="{{item.id}}"
-                            data-selected="{{item.selected}}"
-                            data-lastSelected="{{item.lastSelected}}"
+                            wx:for-item="user"
                     >
-                        <image class="player-avatar" src="{{item.avatar}}"/>
-                        <text class="player-name">{{item.username}}</text>
-                    </view>
-                </view>
-                <!-- 记分区域 -->
-                <block
-                        wx:if="{{gameType !== '相公'}}"
-                        wx:for="{{winPlayers}}"
-                        wx:key="id"
-                        wx:for-item="user"
-                >
-                    <view
-                            wx:if="{{user.lastSelected}}"
-                            class="detail-box last-active"
-                    >
-                        <!-- 得分计算区域 -->
-                        <view class="detail-content">
-                            <view class="detail-row">
-                                <view class="detail-row-title">
-                                    <text>{{user.username}} </text>
-                                    <text class="detail-title">得分:</text>
-                                    <text style="margin-left: 10rpx">{{user.gameInfo.basePoints}}</text>
-                                    <text style="margin-left: 10rpx"> x</text>
-                                    <text style="margin-left: 10rpx">{{user.gameInfo.multi}}</text>
-                                    <text style="margin-left: 10rpx"> =</text>
-                                    <text style="margin-left: 10rpx">{{user.gameInfo.basePoints * user.gameInfo.multi}}</text>
+                        <view
+                                wx:if="{{user.lastSelected}}"
+                                class="detail-box last-active"
+                        >
+                            <view class="detail-content">
+                                <view class="detail-topbar">
+                                    <view class="detail-score">
+                                        <text class="detail-score-label">总分</text>
+                                        <text class="detail-score-value">{{user.gameInfo.basePoints * user.gameInfo.multi}}</text>
+                                    </view>
+                                    <view
+                                            class="delete-btn"
+                                            bindtap="handleDelete"
+                                            data-id="{{user.id}}"
+                                            hover-class="delete-btn-hover"
+                                    >
+                                        ×
+                                    </view>
                                 </view>
 
+                                <view class="formula-card">
+                                    <text class="formula-label">计算方式</text>
+                                    <view class="formula-values">
+                                        <text class="formula-main">{{user.gameInfo.basePoints}}</text>
+                                        <text class="formula-sign">×</text>
+                                        <text class="formula-main">{{user.gameInfo.multi}}</text>
+                                        <text class="formula-sign">=</text>
+                                        <text class="formula-result">{{user.gameInfo.basePoints * user.gameInfo.multi}}</text>
+                                    </view>
+                                </view>
+
+                                <view class="section">
+                                    <text class="section-title">选择底分</text>
+                                    <view class="button-row">
+                                        <view class="tag-group">
+                                            <view
+                                                    wx:for="{{points}}"
+                                                    wx:key="index"
+                                                    class="tag-btn {{item.selected ? 'active' : ''}}"
+                                                    bindtap="selectBasePoints"
+                                                    data-name="{{item.name}}"
+                                                    data-selected="{{item.selected}}"
+                                                    data-point="{{item.point}}"
+                                                    data-userId="{{user.id}}"
+                                                    hover-class="tag-btn-hover"
+                                            >
+                                                {{item.name}}
+                                            </view>
+                                        </view>
+
+                                        <view class="action-group">
+                                            <view
+                                                    class="action-btn minus"
+                                                    bindtap="handleDecrease"
+                                                    data-userId="{{user.id}}"
+                                                    hover-class="action-btn-hover"
+                                            >
+                                                <text>−</text>
+                                            </view>
+                                            <view
+                                                    class="action-btn plus"
+                                                    bindtap="handleIncrease"
+                                                    data-userId="{{user.id}}"
+                                                    hover-class="action-btn-hover"
+                                            >
+                                                +
+                                            </view>
+                                        </view>
+                                    </view>
+                                </view>
+
+                                <view class="section">
+                                    <text class="section-title">选择牌型</text>
+                                    <view class="tile-group">
+                                        <view
+                                                wx:for="{{winTypes}}"
+                                                wx:key="index"
+                                                class="tile-btn {{item.selected ? 'active' : ''}}"
+                                                bindtap="toggleWinType"
+                                                data-name="{{item.name}}"
+                                                data-code="{{item.code}}"
+                                                data-multi="{{item.multi}}"
+                                                data-selected="{{item.selected}}"
+                                                data-userId="{{user.id}}"
+                                                hover-class="tile-btn-hover"
+                                        >
+                                            {{item.name}}
+                                        </view>
+                                    </view>
+                                </view>
+                            </view>
+                        </view>
+                    </block>
+
+                    <block wx:if="{{gameType === '胡牌'}}">
+                        <view class="section-card">
+                            <view class="section-header">
+                                <text class="section-title-user">选择输家</text>
+                            </view>
+                            <view class="players-grid players-grid-four">
                                 <view
-                                        class="delete-btn"
-                                        bindtap="handleDelete"
-                                        data-id="{{user.id}}"
-                                        hover-class="delete-btn-hover"
+                                        wx:for="{{losePlayers}}"
+                                        wx:key="id"
+                                        class="player-card loser-card {{item.selected ? 'loser-selected' : ''}} {{item.disabled ? 'disabled-card' : ''}}"
+                                        bindtap="selectLosePlayer"
+                                        data-id="{{item.id}}"
+                                        data-selected="{{item.selected}}"
+                                        data-disabled="{{item.disabled}}"
                                 >
-                                    x
-                                </view>
-                            </view>
-
-                            <!-- 底分区域 -->
-                            <text class="section-title">选择底分</text>
-                            <view class="button-row">
-                                <view class="tag-group">
-                                    <view
-                                            wx:for="{{points}}"
-                                            wx:key="index"
-                                            class="tag-btn {{item.selected ? 'active' : ''}}"
-                                            bindtap="selectBasePoints"
-                                            data-name="{{item.name}}"
-                                            data-selected="{{item.selected}}"
-                                            data-point="{{item.point}}"
-                                            data-userId="{{user.id}}"
-                                            hover-class="tag-btn-hover"
-                                    >
-                                        {{item.name}}
-                                    </view>
-                                </view>
-
-                                <!-- 操作按钮组 -->
-                                <view class="action-group">
-                                    <view
-                                            class="action-btn minus"
-                                            bindtap="handleDecrease"
-                                            data-userId="{{user.id}}"
-                                            hover-class="action-btn-hover"
-                                    >
-                                        <text>−</text>
-                                    </view>
-                                    <view
-                                            class="action-btn plus"
-                                            bindtap="handleIncrease"
-                                            data-userId="{{user.id}}"
-                                            hover-class="action-btn-hover"
-                                    >
-                                        +
-                                    </view>
-                                </view>
-                            </view>
-
-                            <view class="section">
-                                <text class="section-title">选择牌型</text>
-                                <view class="tile-group">
-                                    <view
-                                            wx:for="{{winTypes}}"
-                                            wx:key="index"
-                                            class="tile-btn {{item.selected ? 'active' : ''}}"
-                                            bindtap="toggleWinType"
-                                            data-name="{{item.name}}"
-                                            data-code="{{item.code}}"
-                                            data-multi="{{item.multi}}"
-                                            data-selected="{{item.selected}}"
-                                            data-userId="{{user.id}}"
-                                            hover-class="tile-btn-hover"
-                                    >
-                                        {{item.name}}
-                                    </view>
+                                    <image class="player-avatar" src="{{item.avatar}}"/>
+                                    <text class="player-name">{{item.username}}</text>
                                 </view>
                             </view>
                         </view>
+                    </block>
+                </block>
+
+                <block wx:else>
+                    <view class="section-card">
+                        <view class="section-header">
+                            <text class="section-title-user">当前牌桌</text>
+                            <text class="replace-btn" bindtap="cancelChangePlayers">取消换人</text>
+                        </view>
+                        <view class="table-players-grid">
+                            <view
+                                    wx:for="{{currentTablePlayers}}"
+                                    wx:key="index"
+                                    class="table-player-card {{item.empty ? 'empty' : 'filled'}}"
+                            >
+                                <block wx:if="{{!item.empty}}">
+                                    <image class="player-avatar" src="{{item.avatar}}"/>
+                                    <text class="player-name">{{item.username}}</text>
+                                </block>
+                                <block wx:else>
+                                    <view class="empty-seat-icon">+</view>
+                                    <text class="empty-seat-text">空位</text>
+                                </block>
+                            </view>
+                        </view>
+                    </view>
+
+                    <view class="section-card">
+                        <view class="section-header section-header-secondary">
+                            <text class="section-title-user">选择牌桌玩家</text>
+                            <text class="section-subtitle">已选 {{selectUserToPlayList.length}} / 4</text>
+                        </view>
+                        <scroll-view scroll-y class="scroll-view-container">
+                            <view class="all-players-grid">
+                                <view
+                                        wx:for="{{allPlayers}}"
+                                        wx:key="id"
+                                        class="all-player-card {{ item.selected ? 'active' : ''}} {{ item.selected ? 'last-active' : ''}}"
+                                        bindtap="selectPlayerToPlay"
+                                        data-id="{{item.id}}"
+                                        data-selected="{{item.selected}}"
+                                >
+                                    <image class="player-avatar" src="{{item.avatar}}"/>
+                                    <text class="player-name">{{item.username}}</text>
+                                </view>
+                            </view>
+                        </scroll-view>
                     </view>
                 </block>
-                <!-- 输家列表 -->
-                <block wx:if="{{gameType === '胡牌'}}">
-                    <view class="section-header">
-                        <text class="section-title-user">☹️ 选择输家</text>
-                    </view>
-                    <view class="players-grid">
-                        <view
-                                wx:for="{{losePlayers}}"
-                                wx:key="id"
-                                class="player-card loser-card {{item.selected ? 'loser-selected' : ''}} {{item.disabled ? 'disabled-card' : ''}}"
-                                bindtap="selectLosePlayer"
-                                data-id="{{item.id}}"
-                                data-selected="{{item.selected}}"
-                                data-disabled="{{item.disabled}}"
-                        >
-                            <image class="player-avatar" src="{{item.avatar}}"/>
-                            <text class="player-name">{{item.username}}</text>
-                        </view>
-                    </view>
-                </block>
-            </block>
-            <block wx:else>
-                <view class="section-header">
-                    <text class="section-title-user">🎴 当前牌桌</text>
-                    <text class="replace-btn" bindtap="cancelChangePlayers">取消换人</text>
-                </view>
-                <view class="table-players-grid">
-                    <view
-                            wx:for="{{currentTablePlayers}}"
-                            wx:key="index"
-                            class="table-player-card {{item.empty ? 'empty' : 'filled'}}"
-                    >
-                        <block wx:if="{{!item.empty}}">
-                            <image class="player-avatar" src="{{item.avatar}}"/>
-                            <text class="player-name">{{item.username}}</text>
-                        </block>
-                        <block wx:else>
-                            <view class="empty-seat-icon">+</view>
-                            <text class="empty-seat-text">空位</text>
-                        </block>
-                    </view>
-                </view>
-                <view class="section-header section-header-secondary">
-                    <text class="section-title-user">👥 选择牌桌玩家</text>
-                    <text class="section-subtitle">已选 {{selectUserToPlayList.length}} / 4</text>
-                </view>
-                <scroll-view scroll-y class="scroll-view-container">
-                    <view class="all-players-grid">
-                        <view
-                                wx:for="{{allPlayers}}"
-                                wx:key="id"
-                                class="all-player-card {{ item.selected ? 'active' : ''}} {{ item.selected ? 'last-active' : ''}}"
-                                bindtap="selectPlayerToPlay"
-                                data-id="{{item.id}}"
-                                data-selected="{{item.selected}}"
-                        >
-                            <image class="player-avatar" src="{{item.avatar}}"/>
-                            <text class="player-name">{{item.username}}</text>
-                        </view>
-                    </view>
-                </scroll-view>
-            </block>
-
-        </view>
+            </view>
+        </scroll-view>
 
         <view class="drawer-content-bottom">
             <block wx:if="{{changingPlayers}}">
