@@ -172,14 +172,23 @@ Component({
       if (!userId || typeof userId !== 'number') {
         return
       }
-      const winPlayers = this.data.winPlayers.map((player: User) =>
-        player.id === userId ? { ...player, gameInfo: { basePoints: 0, winTypes: [], multi: 1 } } : player
-      )
+      const winPlayers = this.data.winPlayers.map((player: User) => ({
+        ...player,
+        selected: false,
+        lastSelected: player.id === userId,
+        gameInfo: player.id === userId ? { basePoints: 0, winTypes: [], multi: 1 } : player.gameInfo,
+      }))
+      const losePlayers = this.data.losePlayers.map((player: User) => ({
+        ...player,
+        selected: false,
+        disabled: false,
+      }))
       const points = this.data.points.map((point: any) => ({ ...point, selected: false }))
       const winTypes = this.data.winTypes.map((winType: any) => ({ ...winType, selected: false }))
 
       this.setData({
         winPlayers,
+        losePlayers,
         points,
         winTypes,
       })
