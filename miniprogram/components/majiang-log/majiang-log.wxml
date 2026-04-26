@@ -86,11 +86,6 @@
                     </block>
                 </view>
 
-                <!-- 记账信息 -->
-                <view class="bookkeeping-info">
-                    <text>记账玩家：{{item.recorder.user.username}}</text>
-                    <text>奖励积分：+{{item.recorder.points}}</text>
-                </view>
             </view>
         </block>
     </view>
