@@ -253,4 +253,40 @@
             </block>
         </view>
     </view>
+
+    <view wx:if="{{showSubmitConfirm}}" class="submit-confirm-overlay" catchtouchmove="noop">
+        <view class="submit-confirm-mask" bindtap="hideSubmitConfirm"></view>
+        <view class="submit-confirm-dialog">
+            <view class="submit-confirm-header">
+                <text class="submit-confirm-title">提交确认</text>
+                <text class="submit-confirm-type">{{submitGameTypeLabel}}</text>
+            </view>
+
+            <view class="submit-confirm-section">
+                <text class="submit-confirm-section-title">赢家</text>
+                <view class="submit-confirm-list">
+                    <view wx:for="{{submitWinnerSummary}}" wx:key="id" class="submit-confirm-item">
+                        <view class="submit-confirm-item-main">
+                            <text class="submit-confirm-name">{{item.username}}</text>
+                            <text class="submit-confirm-score">{{item.scoreText}}</text>
+                        </view>
+                        <text class="submit-confirm-detail">{{item.detailText}}</text>
+                        <text class="submit-confirm-detail submit-confirm-detail-muted">{{item.winTypeText}}</text>
+                    </view>
+                </view>
+            </view>
+
+            <view class="submit-confirm-section">
+                <text class="submit-confirm-section-title">输家</text>
+                <view class="submit-confirm-tags">
+                    <text wx:for="{{submitLoserSummary}}" wx:key="id" class="submit-confirm-tag">{{item.username}}</text>
+                </view>
+            </view>
+
+            <view class="submit-confirm-actions">
+                <view class="submit-confirm-btn submit-confirm-btn-cancel" bindtap="hideSubmitConfirm">取消</view>
+                <view class="submit-confirm-btn submit-confirm-btn-confirm" bindtap="confirmSubmit">确定提交</view>
+            </view>
+        </view>
+    </view>
 </view>

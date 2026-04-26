@@ -15,6 +15,13 @@ Component({
     losePlayers: [] as User[],
     changingPlayers: false,
     selectUserToPlayList: [] as number[],
+    showSubmitConfirm: false,
+    submitGameType: 0,
+    submitGameTypeLabel: '',
+    submitWinners: [] as any[],
+    submitLosers: [] as any[],
+    submitWinnerSummary: [] as any[],
+    submitLoserSummary: [] as any[],
 
     // 底分
     points: [
@@ -78,9 +85,62 @@ Component({
         winPlayers: [],
         losePlayers: [],
         changingPlayers: false,
+        showSubmitConfirm: false,
+        submitGameType: 0,
+        submitGameTypeLabel: '',
+        submitWinners: [],
+        submitLosers: [],
+        submitWinnerSummary: [],
+        submitLoserSummary: [],
         points: this.getInitialPoints(),
         winTypes: this.getInitialWinTypes(),
       })
+    },
+
+    getWinTypeNameMap() {
+      return this.getInitialWinTypes().reduce((map: Record<string, string>, item: any) => {
+        map[item.code] = item.name
+        return map
+      }, {})
+    },
+
+    buildSubmitWinnerSummary(players: User[]) {
+      const winTypeNameMap = this.getWinTypeNameMap()
+      return players.map((player: User) => {
+        const winTypeNames = (player.gameInfo.winTypes || []).map((code: string) => winTypeNameMap[code]).filter(Boolean)
+        return {
+          id: player.id,
+          username: player.username,
+          scoreText: `${player.gameInfo.basePoints * player.gameInfo.multi} 分`,
+          detailText: `底${player.gameInfo.basePoints} x 倍${player.gameInfo.multi}`,
+          winTypeText: winTypeNames.length > 0 ? winTypeNames.join(' / ') : '无牌型',
+        }
+      })
+    },
+
+    buildSubmitLoserSummary(players: User[]) {
+      return players.map((player: User) => ({
+        id: player.id,
+        username: player.username,
+      }))
+    },
+
+    hideSubmitConfirm() {
+      this.setData({
+        showSubmitConfirm: false,
+        submitGameType: 0,
+        submitGameTypeLabel: '',
+        submitWinners: [],
+        submitLosers: [],
+        submitWinnerSummary: [],
+        submitLoserSummary: [],
+      })
+    },
+
+    noop() {},
+
+    confirmSubmit() {
+      this.submit(this.data.submitGameType, this.data.submitWinners as User[], this.data.submitLosers as User[])
     },
 
     buildTablePlayers(selectedIds: number[], preferredPlayers: User[] = []) {
@@ -580,27 +640,14 @@ Component({
         gameType = 5
       }
 
-      let message = ''
-      winners.forEach((player: User) => {
-        message += `赢家：${player.username}, 得分: ${player.gameInfo.basePoints * player.gameInfo.multi} 分\n`
-      })
-
-      message += `输家: `
-      losers.forEach((player: User) => {
-        message += `${player.username}, `
-      })
-      message = message.replace(/..$/, '')
-
-      wx.showModal({
-        title: '提交确认',
-        content: message,
-        confirmText: '确定',
-        cancelText: '记错了',
-        success: (res) => {
-          if (res.confirm) {
-            this.submit(gameType, winners, losers)
-          }
-        },
+      this.setData({
+        showSubmitConfirm: true,
+        submitGameType: gameType,
+        submitGameTypeLabel: this.data.gameType,
+        submitWinners: winners,
+        submitLosers: losers,
+        submitWinnerSummary: this.buildSubmitWinnerSummary(winners),
+        submitLoserSummary: this.buildSubmitLoserSummary(losers),
       })
     },
 
@@ -617,6 +664,7 @@ Component({
         losers: losers.map((player: User) => player.id),
       }
       saveMaJiangGame(data as any).then(() => {
+        this.hideSubmitConfirm()
         this.closeDrawer()
         wx.showToast({
           title: '提交成功',
