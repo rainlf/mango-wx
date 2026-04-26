@@ -65,6 +65,10 @@
                                     data-selected="{{item.selected}}"
                                     data-lastSelected="{{item.lastSelected}}"
                             >
+                                <view class="winner-score-badge {{item.gameInfo.basePoints * item.gameInfo.multi > 0 ? 'winner-score-badge-active' : ''}}">
+                                    <text wx:if="{{item.gameInfo.basePoints * item.gameInfo.multi > 0}}">{{item.gameInfo.basePoints * item.gameInfo.multi}}</text>
+                                    <text wx:else>未设</text>
+                                </view>
                                 <image class="player-avatar" src="{{item.avatar}}"/>
                                 <text class="player-name">{{item.username}}</text>
                             </view>

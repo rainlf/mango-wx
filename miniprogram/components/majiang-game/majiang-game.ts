@@ -392,34 +392,46 @@ Component({
           return
         }
 
-        this.setData({
-          winPlayers: this.data.winPlayers.map((player: User) => {
-            if (player.id === playerId) {
-              return {
-                ...player,
-                selected: selected ? false : true,
-                lastSelected: true,
-              }
+        const shouldKeepSelected = selected && !lastSelected
+        const nextSelected = shouldKeepSelected ? true : !selected
+        const nextWinPlayers = this.data.winPlayers.map((player: User) => {
+          if (player.id === playerId) {
+            return {
+              ...player,
+              selected: nextSelected,
+              lastSelected: true,
             }
-            return { ...player, lastSelected: false }
-          }),
+          }
+          return { ...player, lastSelected: false }
         })
 
-        if (!lastSelected) {
+        const nextSelectedPlayerIds = nextWinPlayers.filter((player: User) => player.selected).map((player: User) => player.id)
+        const data: any = {
+          winPlayers: nextWinPlayers,
+          losePlayers: nextWinPlayers.map((player: User) => ({
+            ...player,
+            selected: nextSelectedPlayerIds.includes(player.id)
+              ? false
+              : !!this.data.losePlayers.find((losePlayer: any) => losePlayer.id === player.id && losePlayer.selected),
+            disabled: nextSelectedPlayerIds.includes(player.id),
+          })),
+        }
+
+        if (!selected || shouldKeepSelected) {
           const user = this.data.winPlayers.filter((x: User) => x.id === playerId)[0]
           const targetPoints = user.gameInfo.basePoints
           const targetWinTypes = user.gameInfo.winTypes
-          this.setData({
-            points: this.data.points.map((point: any) => ({
-              ...point,
-              selected: point.point === targetPoints,
-            })),
-            winTypes: this.data.winTypes.map((winType: any) => ({
-              ...winType,
-              selected: targetWinTypes.includes(winType.code),
-            })),
-          })
+          data.points = this.data.points.map((point: any) => ({
+            ...point,
+            selected: point.point === targetPoints,
+          }))
+          data.winTypes = this.data.winTypes.map((winType: any) => ({
+            ...winType,
+            selected: targetWinTypes.includes(winType.code),
+          }))
         }
+        this.setData(data)
+        return
       }
 
       if (this.data.gameType === '自摸' || this.data.gameType === '相公') {
@@ -436,18 +448,19 @@ Component({
             winTypes: this.data.winTypes.map((winType: any) => ({ ...winType, selected: false })),
           })
         }
+        const selectedPlayerId: number[] = this.data.winPlayers
+          .map((player: User) => (player.id === playerId ? player.id : 0))
+          .filter((id: number) => id > 0)
+        this.setData({
+          losePlayers: this.data.winPlayers.map((player: User) => ({
+            ...player,
+            selected: selectedPlayerId.includes(player.id)
+              ? false
+              : !!this.data.losePlayers.find((losePlayer: any) => losePlayer.id === player.id && losePlayer.selected),
+            disabled: selectedPlayerId.includes(player.id),
+          })),
+        })
       }
-
-      const selectedPlayerId: number[] = this.data.winPlayers.filter((player: User) => player.selected).map((player: User) => player.id)
-      this.setData({
-        losePlayers: this.data.winPlayers.map((player: User) => ({
-          ...player,
-          selected: selectedPlayerId.includes(player.id)
-            ? false
-            : !!this.data.losePlayers.find((losePlayer: any) => losePlayer.id === player.id && losePlayer.selected),
-          disabled: selectedPlayerId.includes(player.id),
-        })),
-      })
     },
     selectLosePlayer(e: any) {
       const playerId = e.currentTarget.dataset.id

@@ -211,6 +211,31 @@
     box-shadow: 0 8rpx 18rpx rgba(52, 199, 89, 0.14);
 }
 
+.winner-score-badge {
+    position: absolute;
+    top: 10rpx;
+    right: 10rpx;
+    min-width: 52rpx;
+    height: 34rpx;
+    padding: 0 10rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999rpx;
+    background: rgba(148, 163, 184, 0.16);
+    color: #7b8798;
+    font-size: 18rpx;
+    font-weight: 700;
+    line-height: 1;
+    box-sizing: border-box;
+}
+
+.winner-score-badge-active {
+    background: linear-gradient(135deg, #ffd86d 0%, #ffb300 100%);
+    color: #fff;
+    box-shadow: 0 6rpx 14rpx rgba(255, 183, 77, 0.18);
+}
+
 .loser-card.loser-selected {
     background: linear-gradient(180deg, rgba(255, 244, 244, 0.98) 0%, rgba(255, 235, 235, 0.98) 100%);
     border-color: rgba(239, 68, 68, 0.2);
