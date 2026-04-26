@@ -22,6 +22,14 @@
       "sdkVersionEnd": "15.255.255"
     }
   },
+  "preloadRule": {
+    "pages/majiang/index": {
+      "network": "all",
+      "packages": [
+        "pages/update/index"
+      ]
+    }
+  },
   "lazyCodeLoading": "requiredComponents",
   "sitemapLocation": "sitemap.json"
 }

@@ -26,6 +26,7 @@
         totalGames="{{user.totalGames}}"
         winCount="{{user.winCount}}"
         winRate="{{user.winRate}}"
+        bind:settingsclick="openProfileEditor"
       />
 
       <block wx:if="{{showUserRank}}">
@@ -86,6 +87,48 @@
 
     <view class="game-container">
       <majiang-game showDrawer="{{showDrawer}}" bind:refreshData="refreshData" bind:closeDrawer="handleCloseDrawer" />
+    </view>
+
+    <view wx:if="{{showProfileDrawer}}" class="profile-drawer-container">
+      <view class="profile-drawer-mask" bindtap="closeProfileEditor"></view>
+      <view class="profile-drawer">
+        <view class="profile-drawer-handle"></view>
+        <view class="profile-drawer-header">
+          <text class="profile-drawer-title">修改资料</text>
+          <view class="profile-drawer-close" bindtap="closeProfileEditor">关闭</view>
+        </view>
+
+        <view class="profile-drawer-body">
+          <button class="profile-avatar-btn" open-type="chooseAvatar" bindchooseavatar="onProfileChooseAvatar">
+            <image
+              wx:if="{{profileAvatarUrl || user.avatar}}"
+              class="profile-avatar"
+              src="{{profileAvatarUrl || user.avatar}}"
+              mode="aspectFill"
+            ></image>
+            <view wx:else class="profile-avatar profile-avatar-placeholder">+</view>
+          </button>
+          <text class="profile-avatar-tip">点击更换头像</text>
+
+          <view class="profile-input-box">
+            <input
+              type="nickname"
+              class="profile-nickname-input"
+              placeholder="请输入昵称"
+              placeholder-class="profile-nickname-placeholder"
+              bindinput="onProfileNicknameInput"
+              value="{{profileNickname}}"
+            />
+          </view>
+        </view>
+
+        <view class="profile-drawer-footer">
+          <view class="profile-footer-btn profile-footer-btn-cancel" bindtap="closeProfileEditor">取消</view>
+          <view class="profile-footer-btn profile-footer-btn-confirm" bindtap="saveProfile">
+            {{isProfileSaving ? '保存中...' : '保存'}}
+          </view>
+        </view>
+      </view>
     </view>
   </view>
   </scroll-view>

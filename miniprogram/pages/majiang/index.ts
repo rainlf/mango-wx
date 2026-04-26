@@ -1,4 +1,4 @@
-import { getUserInfo, getUserRank } from '../../services/user-service'
+import { getUserInfo, getUserRank, updateUsername, uploadUserInfo } from '../../services/user-service'
 import { getGameList, getGameListByUser, cancelGame, preloadMajiangPlayers } from '../../services/majiang-service'
 import { convertUserDTO, convertGameDTO, updateAvatarFromCache } from '../../utils/util'
 
@@ -20,6 +20,11 @@ Page({
     showUserRankBtn: false,
     showDrawer: false,
     currentUserId: 0,
+    showProfileDrawer: false,
+    profileAvatarUrl: '',
+    profileNickname: '',
+    profileAvatarChanged: false,
+    isProfileSaving: false,
   },
 
   onLoad() {
@@ -216,6 +221,86 @@ Page({
 
   refreshGameLogPanel() {
     return Promise.allSettled([this.fetchUserInfo(), this.fetchGameList(false)])
+  },
+
+  openProfileEditor() {
+    const user = this.data.user || {}
+    this.setData({
+      showProfileDrawer: true,
+      profileAvatarUrl: '',
+      profileNickname: user.nickname || user.username || '',
+      profileAvatarChanged: false,
+      showDrawer: false,
+    })
+  },
+
+  closeProfileEditor() {
+    this.setData({
+      showProfileDrawer: false,
+      profileAvatarUrl: '',
+      profileNickname: '',
+      profileAvatarChanged: false,
+      isProfileSaving: false,
+    })
+  },
+
+  onProfileChooseAvatar(e: any) {
+    this.setData({
+      profileAvatarUrl: e.detail.avatarUrl,
+      profileAvatarChanged: true,
+    })
+  },
+
+  onProfileNicknameInput(e: any) {
+    this.setData({
+      profileNickname: e.detail.value,
+    })
+  },
+
+  saveProfile() {
+    const { user, profileNickname, profileAvatarUrl, profileAvatarChanged, isProfileSaving } = this.data
+    if (!user || !user.id || isProfileSaving) return
+
+    const trimmedNickname = (profileNickname || '').trim()
+    if (!trimmedNickname) {
+      wx.showToast({ title: '请输入昵称', icon: 'none' })
+      return
+    }
+
+    const originalNickname = user.nickname || user.username || ''
+    let savePromise: Promise<any> | null = null
+    if (profileAvatarChanged && profileAvatarUrl) {
+      savePromise = uploadUserInfo(user.id, trimmedNickname, profileAvatarUrl)
+    } else if (trimmedNickname !== originalNickname) {
+      savePromise = updateUsername(user.id, trimmedNickname)
+    }
+
+    if (!savePromise) {
+      wx.showToast({ title: '未做修改', icon: 'none' })
+      return
+    }
+
+    this.setData({ isProfileSaving: true })
+    wx.showLoading({ title: '保存中...' })
+    savePromise
+      .then(() => getUserInfo(user.id))
+      .then((dto) => {
+        const updatedUser = convertUserDTO(dto)
+        wx.setStorageSync('user', updatedUser)
+        this.setData({
+          user: updatedUser,
+          isProfileSaving: false,
+        })
+        wx.hideLoading()
+        wx.showToast({ title: '保存成功', icon: 'success' })
+        this.closeProfileEditor()
+      })
+      .catch((err) => {
+        console.error('保存资料失败:', err)
+        this.setData({ isProfileSaving: false })
+        wx.hideLoading()
+        wx.showToast({ title: '保存失败', icon: 'none' })
+      })
   },
 
   openUserRank() {

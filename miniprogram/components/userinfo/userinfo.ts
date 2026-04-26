@@ -57,9 +57,7 @@ Component({
 
   methods: {
     onSettingsClick() {
-      wx.navigateTo({
-        url: '../update/index',
-      })
+      this.triggerEvent('settingsclick')
     },
   },
 })
