@@ -140,11 +140,11 @@
 }
 
 .winner {
-    background: linear-gradient(180deg, rgba(241, 252, 246, 0.94) 0%, rgba(233, 249, 240, 0.94) 100%);
+    background: linear-gradient(180deg, rgba(255, 249, 249, 0.94) 0%, rgba(255, 244, 244, 0.94) 100%);
 }
 
 .loser {
-    background: linear-gradient(180deg, rgba(255, 249, 249, 0.94) 0%, rgba(255, 244, 244, 0.94) 100%);
+    background: linear-gradient(180deg, rgba(241, 252, 246, 0.94) 0%, rgba(233, 249, 240, 0.94) 100%);
 }
 
 .avatar {
