@@ -49,7 +49,7 @@ export const convertUserDTO = (dto: UserDTO): User => {
     totalGames: dto.total_games || 0,
     winCount: dto.win_count || 0,
     winRate: typeof dto.win_rate === 'number' ? dto.win_rate : 0,
-    lastTags: [],
+    lastTags: Array.isArray(dto.tags) ? dto.tags : [],
     createdTime: dto.created_at || '',
     updatedTime: dto.updated_at || '',
     selected: false,

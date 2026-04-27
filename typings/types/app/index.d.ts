@@ -92,6 +92,7 @@ interface UserDTO {
   id: number;
   nickname: string;
   avatar_url: string;
+  tags?: string[];
   open_id: string;
   total_points: number;
   total_games: number;
