@@ -11,6 +11,7 @@ Component({
     rankMode: 'points',
     displayList: [] as any[],
     worstUser: null as any,
+    expandedTagUserIds: [] as number[],
   },
 
   observers: {
@@ -29,6 +30,7 @@ Component({
     updateDisplayList() {
       const list = Array.isArray((this as any).properties.listData) ? [...((this as any).properties.listData as any[])] : []
       const rankMode = this.data.rankMode
+      const expandedTagUserIds = Array.isArray(this.data.expandedTagUserIds) ? this.data.expandedTagUserIds : []
       const pointsSortedList = [...list].sort((a, b) => {
         if ((b.points || 0) !== (a.points || 0)) {
           return (b.points || 0) - (a.points || 0)
@@ -57,8 +59,14 @@ Component({
         return (b.winCount || 0) - (a.winCount || 0)
       }).map((item) => ({
         ...item,
-        displayTags: Array.isArray(item.lastTags) ? item.lastTags.slice(0, 3) : [],
-        hiddenTagCount: Array.isArray(item.lastTags) && item.lastTags.length > 3 ? item.lastTags.length - 3 : 0,
+        isTagsExpanded: expandedTagUserIds.includes(item.id),
+        canToggleTags: Array.isArray(item.lastTags) && item.lastTags.length > 3,
+        displayTags: Array.isArray(item.lastTags)
+          ? (expandedTagUserIds.includes(item.id) ? item.lastTags : item.lastTags.slice(0, 3))
+          : [],
+        hiddenTagCount: Array.isArray(item.lastTags) && !expandedTagUserIds.includes(item.id) && item.lastTags.length > 3
+          ? item.lastTags.length - 3
+          : 0,
         rankMetricText: rankMode === 'winRate'
           ? `${(((item.winRate || 0) * 1000) / 10).toFixed(1)}%`
           : String(item.points || 0),
@@ -78,6 +86,24 @@ Component({
       }
       this.setData({
         rankMode: mode,
+      }, () => {
+        this.updateDisplayList()
+      })
+    },
+    toggleTags(e: any) {
+      const userId = Number(e.currentTarget.dataset.id || 0)
+      if (!userId) {
+        return
+      }
+      const expandedTagUserIds = Array.isArray(this.data.expandedTagUserIds) ? [...this.data.expandedTagUserIds] : []
+      const userIndex = expandedTagUserIds.indexOf(userId)
+      if (userIndex >= 0) {
+        expandedTagUserIds.splice(userIndex, 1)
+      } else {
+        expandedTagUserIds.push(userId)
+      }
+      this.setData({
+        expandedTagUserIds,
       }, () => {
         this.updateDisplayList()
       })

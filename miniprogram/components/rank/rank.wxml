@@ -81,7 +81,7 @@
                             <text wx:if="{{item === '一炮双响' || item === '一炮三响' || item === '相公'}}" class="tag2">{{item}}</text>
                             <text wx:else class="tag">{{item}}</text>
                         </block>
-                        <text wx:if="{{item.hiddenTagCount > 0}}" class="tag tag-more">+{{item.hiddenTagCount}}</text>
+                        <text wx:if="{{item.canToggleTags}}" class="tag tag-more" catch:tap="toggleTags" data-id="{{item.id}}">{{item.isTagsExpanded ? '收起' : '+' + item.hiddenTagCount}}</text>
                     </view>
                 </view>
 
