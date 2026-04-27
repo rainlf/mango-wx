@@ -317,6 +317,11 @@
     line-height: 1.4;
 }
 
+.tag-more {
+    background: rgba(93, 120, 149, 0.12);
+    color: #5d7895;
+}
+
 /* 得分样式 */
 .score-box {
     text-align: right;
