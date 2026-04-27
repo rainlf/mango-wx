@@ -6,6 +6,9 @@
         refresher-triggered="{{isRefreshing}}"
 >
     <view class="list-content">
+        <view class="panel-banner">
+            <text class="panel-banner__title">玩家排行</text>
+        </view>
         <block wx:for="{{listData}}" wx:key="index">
             <view class="list-item">
                 <!-- 排名徽章 -->

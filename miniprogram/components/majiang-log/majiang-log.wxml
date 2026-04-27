@@ -6,6 +6,9 @@
         bindscrolltolower="onScrollToLower"
         refresher-triggered="{{isRefreshing}}">
     <view class="list-content">
+        <view class="panel-banner panel-banner-history">
+            <text class="panel-banner__title">游戏历史</text>
+        </view>
         <block wx:for="{{listData}}" wx:key="index">
             <view class="record-item">
                 <!-- 对局信息头部 -->
