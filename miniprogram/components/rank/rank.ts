@@ -57,6 +57,7 @@ Component({
         return (b.winCount || 0) - (a.winCount || 0)
       }).map((item) => ({
         ...item,
+        displayTags: Array.isArray(item.lastTags) ? item.lastTags.slice(0, 4) : [],
         rankMetricText: rankMode === 'winRate'
           ? `${(((item.winRate || 0) * 1000) / 10).toFixed(1)}%`
           : String(item.points || 0),
