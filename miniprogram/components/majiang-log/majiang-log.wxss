@@ -124,6 +124,7 @@
     line-height: 1.1;
     color: #9aa8b8;
     max-width: 260rpx;
+    margin-right: 16rpx;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
