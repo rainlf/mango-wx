@@ -7,9 +7,24 @@
 >
     <view class="list-content">
         <view class="panel-banner">
-            <text class="panel-banner__title">玩家排行</text>
+            <view class="panel-banner__tabs">
+                <view
+                    class="panel-banner__tab {{rankMode === 'points' ? 'panel-banner__tab-active' : ''}}"
+                    catch:tap="switchRankMode"
+                    data-mode="points"
+                >
+                    金币榜
+                </view>
+                <view
+                    class="panel-banner__tab {{rankMode === 'winRate' ? 'panel-banner__tab-active' : ''}}"
+                    catch:tap="switchRankMode"
+                    data-mode="winRate"
+                >
+                    胜率榜
+                </view>
+            </view>
         </view>
-        <block wx:for="{{listData}}" wx:key="index">
+        <block wx:for="{{displayList}}" wx:key="id">
             <view class="list-item">
                 <!-- 排名徽章 -->
 
@@ -51,17 +66,17 @@
 
                 <!-- 得分展示 -->
                 <view class="score-box">
-                    <block wx:if="{{item.points >= 0}}">
-                        <text class="score-text">{{item.points}}</text>
+                    <block wx:if="{{item.rankMetricPositive}}">
+                        <text class="score-text">{{item.rankMetricText}}</text>
                     </block>
                     <block wx:else>
-                        <text class="score-text2">{{item.points}}</text>
+                        <text class="score-text2">{{item.rankMetricText}}</text>
                     </block>
                     <view class="score-meta">
                         <view class="coin-icon coin-icon-sm">
                             <view class="coin-icon-inner coin-icon-inner-sm"></view>
                         </view>
-                        <text class="score-label">金币</text>
+                        <text class="score-label">{{item.rankMetricLabel}}</text>
                     </view>
                 </view>
             </view>
