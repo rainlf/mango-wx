@@ -38,7 +38,13 @@
                     </view>
 
                     <view class="record-header-right">
-                        <text class="game-time">{{item.createdTime}}</text>
+                        <view class="record-meta">
+                            <text
+                                class="recorder-info"
+                                wx:if="{{item.recorder && item.recorder.user && (item.recorder.user.username || item.recorder.user.nickname)}}"
+                            >记录人：{{item.recorder.user.username || item.recorder.user.nickname}}</text>
+                            <text class="game-time">{{item.createdTime}}</text>
+                        </view>
                         <image
                                 class="delete-btn"
                                 src="{{item.deleteIcon}}"
