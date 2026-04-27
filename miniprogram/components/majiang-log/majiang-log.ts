@@ -6,6 +6,18 @@ Component({
       type: Array,
       value: [],
     },
+    title: {
+      type: String,
+      value: '游戏历史',
+    },
+    emptyText: {
+      type: String,
+      value: '',
+    },
+    isInitialLoading: {
+      type: Boolean,
+      value: false,
+    },
     hasMoreData: {
       type: Boolean,
       value: true,

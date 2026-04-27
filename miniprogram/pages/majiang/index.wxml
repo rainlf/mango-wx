@@ -42,10 +42,13 @@
         <majiang-log
           class="content-panel"
           id="game-log-component"
+          title="{{historyTitle}}"
+          emptyText="{{historyEmptyText}}"
+          isInitialLoading="{{historyLoading}}"
           listData="{{gameList}}"
           hasMoreData="{{hasMoreData}}"
           bind:load="handleGameListLoad"
-          bind:refreshData="refreshData"
+          bind:refreshData="handleCurrentHistoryRefresh"
           bind:loadMore="handleLoadMore"
         />
       </block>
@@ -54,9 +57,13 @@
         <majiang-log
           class="content-panel"
           id="user-game-log-component"
+          title="{{historyTitle}}"
+          emptyText="{{historyEmptyText}}"
+          isInitialLoading="{{historyLoading}}"
           listData="{{userGameList}}"
           hasMoreData="{{hasMoreData}}"
-          bind:load="handleGameListLoad"
+          bind:load="handleUserGameListLoad"
+          bind:refreshData="handleCurrentHistoryRefresh"
           bind:loadMore="handleLoadMore"
         />
       </block>

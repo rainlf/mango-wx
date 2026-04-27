@@ -14,6 +14,9 @@ Page({
     rankList: [] as User[],
     gameList: [] as MajiangLog[],
     userGameList: [] as MajiangLog[],
+    historyTitle: '游戏历史',
+    historyEmptyText: '',
+    historyLoading: false,
     showUserRank: true,
     showGameLog: false,
     showUserGameLog: false,
@@ -59,6 +62,20 @@ Page({
     this.fetchUserInfo()
     this.fetchGameList(false)
   },
+  handleUserGameListLoad() {
+    this.fetchUserInfo()
+    if (this.data.currentUserId) {
+      this.fetchUserGameList(this.data.currentUserId, false)
+    }
+  },
+  handleCurrentHistoryRefresh() {
+    this.fetchUserInfo()
+    if (this.data.showUserGameLog && this.data.currentUserId) {
+      this.fetchUserGameList(this.data.currentUserId, false)
+      return
+    }
+    this.fetchGameList(false)
+  },
 
   // === 排行榜 ===
   fetchUserRank() {
@@ -84,13 +101,16 @@ Page({
 
     if (isLoadMore) {
       this.setData({ isLoadingMore: true })
+    } else {
+      this.setData({ historyLoading: true })
     }
 
     const currentUserId = this.data.user ? this.data.user.id : 0
     getGameList(this.data.pageSize, offset)
       .then((dtos) => {
+        const safeDtos = Array.isArray(dtos) ? dtos : []
         const avatars = wx.getStorageSync('avatars') || []
-        const validDtos = dtos.filter((dto: GameDTO) => Array.isArray(dto.players) && dto.players.length > 0)
+        const validDtos = safeDtos.filter((dto: GameDTO) => Array.isArray(dto.players) && dto.players.length > 0)
         const formattedList = validDtos.map((dto: GameDTO) => {
           const log = convertGameDTO(dto, currentUserId)
           if (avatars.length > 0) this.updateLogAvatars(log, avatars)
@@ -104,13 +124,17 @@ Page({
           gameList: newGameList,
           currentPage: page,
           hasMoreData,
+          historyLoading: false,
           isLoadingMore: false,
         })
         this.notifyComponentLoadMoreComplete()
       })
       .catch((err) => {
         console.error('获取对局记录失败:', err)
-        this.setData({ isLoadingMore: false })
+        this.setData({
+          historyLoading: false,
+          isLoadingMore: false,
+        })
         this.notifyComponentLoadMoreComplete()
       })
   },
@@ -132,7 +156,10 @@ Page({
   fetchUserGameList(userId: number, isLoadMore: boolean = false) {
     if (this.data.isLoadingMore && isLoadMore) return
     if (!isLoadMore) {
-      this.setData({ currentUserId: userId })
+      this.setData({
+        currentUserId: userId,
+        historyLoading: true,
+      })
     }
 
     const page = isLoadMore ? this.data.currentPage + 1 : 0
@@ -147,8 +174,12 @@ Page({
 
     getGameListByUser(targetUserId, this.data.pageSize, offset)
       .then((dtos) => {
+        if (this.data.currentUserId !== targetUserId) {
+          return
+        }
+        const safeDtos = Array.isArray(dtos) ? dtos : []
         const avatars = wx.getStorageSync('avatars') || []
-        const validDtos = dtos.filter((dto: GameDTO) => Array.isArray(dto.players) && dto.players.length > 0)
+        const validDtos = safeDtos.filter((dto: GameDTO) => Array.isArray(dto.players) && dto.players.length > 0)
         const formattedList = validDtos.map((dto: GameDTO) => {
           const log = convertGameDTO(dto, currentUserId)
           log.forOnePlayer = true
@@ -164,13 +195,22 @@ Page({
           userGameList: newUserGameList,
           currentPage: page,
           hasMoreData,
+          historyEmptyText: !isLoadMore && newUserGameList.length === 0 ? '暂无记录' : '',
+          historyLoading: false,
           isLoadingMore: false,
         })
         this.notifyComponentLoadMoreComplete()
       })
       .catch((err) => {
+        if (this.data.currentUserId !== targetUserId) {
+          return
+        }
         console.error('获取个人对局记录失败:', err)
-        this.setData({ isLoadingMore: false })
+        this.setData({
+          historyEmptyText: !isLoadMore ? '' : this.data.historyEmptyText,
+          historyLoading: false,
+          isLoadingMore: false,
+        })
         this.notifyComponentLoadMoreComplete()
       })
   },
@@ -310,6 +350,10 @@ Page({
       showUserGameLog: false,
       showUserRankBtn: false,
       showDrawer: false,
+      historyTitle: '游戏历史',
+      historyEmptyText: '',
+      historyLoading: false,
+      currentUserId: 0,
       currentPage: 0,
       hasMoreData: true,
     }, () => {
@@ -324,6 +368,11 @@ Page({
       showUserGameLog: false,
       showUserRankBtn: true,
       showDrawer: false,
+      historyTitle: '游戏历史',
+      historyEmptyText: '',
+      historyLoading: true,
+      currentUserId: 0,
+      gameList: [],
       currentPage: 0,
       hasMoreData: true,
     }, () => {
@@ -339,20 +388,32 @@ Page({
 
   handleClickUserAvatar(e: any) {
     const userId = e.detail.userId
-    this.fetchUserGameList(userId, false)
+    const username = (e.detail.username || '').trim()
     this.setData({
       showUserRank: false,
       showGameLog: false,
       showUserGameLog: true,
       showUserRankBtn: true,
+      historyTitle: username ? `${username}的游戏历史` : '该玩家的游戏历史',
+      historyEmptyText: '',
+      historyLoading: true,
+      currentUserId: userId,
+      userGameList: [],
+      isLoadingMore: false,
       currentPage: 0,
       hasMoreData: true,
+    }, () => {
+      this.fetchUserGameList(userId, false)
     })
   },
 
   refreshData() {
     this.fetchUserInfo()
     this.fetchUserRank()
+    if (this.data.showUserGameLog && this.data.currentUserId) {
+      this.fetchUserGameList(this.data.currentUserId, false)
+      return
+    }
     this.fetchGameList(false)
   },
 

@@ -7,7 +7,14 @@
         refresher-triggered="{{isRefreshing}}">
     <view class="list-content">
         <view class="panel-banner panel-banner-history">
-            <text class="panel-banner__title">游戏历史</text>
+            <text class="panel-banner__title">{{title}}</text>
+        </view>
+        <view wx:if="{{isInitialLoading && listData.length === 0}}" class="panel-loading">
+            <view class="loading-spinner panel-loading__spinner"></view>
+            <text class="panel-loading__text">加载中...</text>
+        </view>
+        <view wx:if="{{!isInitialLoading && emptyText && listData.length === 0}}" class="panel-empty">
+            <text class="panel-empty__text">{{emptyText}}</text>
         </view>
         <block wx:for="{{listData}}" wx:key="index">
             <view class="record-item">

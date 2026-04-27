@@ -45,6 +45,7 @@ Component({
     },
     clickUserAvatar(e: any) {
       const id = e.target.dataset.id
+      const username = e.target.dataset.username
       try {
         // 触发父页面方法（带参数）
         this.triggerEvent(
@@ -52,6 +53,7 @@ Component({
           {
             from: 'component',
             userId: id,
+            username,
           },
           {
             bubbles: true, // 是否冒泡
