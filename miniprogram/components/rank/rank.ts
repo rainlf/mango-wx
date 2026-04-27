@@ -31,21 +31,36 @@ Component({
       const list = Array.isArray((this as any).properties.listData) ? [...((this as any).properties.listData as any[])] : []
       const rankMode = this.data.rankMode
       const expandedTagUserIds = Array.isArray(this.data.expandedTagUserIds) ? this.data.expandedTagUserIds : []
-      const pointsSortedList = [...list].sort((a, b) => {
-        if ((b.points || 0) !== (a.points || 0)) {
-          return (b.points || 0) - (a.points || 0)
+      const compareParticipation = (a: any, b: any) => {
+        const aHasGames = (a.totalGames || 0) > 0
+        const bHasGames = (b.totalGames || 0) > 0
+        if (aHasGames !== bHasGames) {
+          return aHasGames ? -1 : 1
         }
-        return (b.winCount || 0) - (a.winCount || 0)
+        return 0
+      }
+      const worstSortedList = [...list].sort((a, b) => {
+        if ((a.points || 0) !== (b.points || 0)) {
+          return (a.points || 0) - (b.points || 0)
+        }
+        if ((a.winRate || 0) !== (b.winRate || 0)) {
+          return (a.winRate || 0) - (b.winRate || 0)
+        }
+        return (a.totalGames || 0) - (b.totalGames || 0)
       })
-      const worstUser = pointsSortedList.length > 0
+      const worstUser = worstSortedList.length > 0
         ? {
-            ...pointsSortedList[pointsSortedList.length - 1],
-            worstPointsText: String(pointsSortedList[pointsSortedList.length - 1].points || 0),
-            worstWinRateText: `${((((pointsSortedList[pointsSortedList.length - 1].winRate || 0) * 1000) / 10)).toFixed(1)}%`,
+            ...worstSortedList[0],
+            worstPointsText: String(worstSortedList[0].points || 0),
+            worstWinRateText: `${((((worstSortedList[0].winRate || 0) * 1000) / 10)).toFixed(1)}%`,
           }
         : null
 
       const sortedList = list.sort((a, b) => {
+        const participationResult = compareParticipation(a, b)
+        if (participationResult !== 0) {
+          return participationResult
+        }
         if (rankMode === 'winRate') {
           if ((b.winRate || 0) !== (a.winRate || 0)) {
             return (b.winRate || 0) - (a.winRate || 0)
@@ -59,6 +74,7 @@ Component({
         return (b.winCount || 0) - (a.winCount || 0)
       }).map((item) => ({
         ...item,
+        showNoBattleTag: (item.totalGames || 0) <= 0,
         isTagsExpanded: expandedTagUserIds.includes(item.id),
         canToggleTags: Array.isArray(item.lastTags) && item.lastTags.length > 3,
         displayTags: Array.isArray(item.lastTags)

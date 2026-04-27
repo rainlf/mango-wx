@@ -322,6 +322,11 @@
     color: #5d7895;
 }
 
+.tag-muted {
+    background: rgba(125, 142, 165, 0.12);
+    color: #7c8ea5;
+}
+
 /* 得分样式 */
 .score-box {
     text-align: right;
