@@ -10,6 +10,7 @@ Component({
     isRefreshing: false,
     rankMode: 'points',
     displayList: [] as any[],
+    worstUser: null as any,
   },
 
   observers: {
@@ -28,6 +29,20 @@ Component({
     updateDisplayList() {
       const list = Array.isArray((this as any).properties.listData) ? [...((this as any).properties.listData as any[])] : []
       const rankMode = this.data.rankMode
+      const pointsSortedList = [...list].sort((a, b) => {
+        if ((b.points || 0) !== (a.points || 0)) {
+          return (b.points || 0) - (a.points || 0)
+        }
+        return (b.winCount || 0) - (a.winCount || 0)
+      })
+      const worstUser = pointsSortedList.length > 0
+        ? {
+            ...pointsSortedList[pointsSortedList.length - 1],
+            worstPointsText: String(pointsSortedList[pointsSortedList.length - 1].points || 0),
+            worstWinRateText: `${((((pointsSortedList[pointsSortedList.length - 1].winRate || 0) * 1000) / 10)).toFixed(1)}%`,
+          }
+        : null
+
       const sortedList = list.sort((a, b) => {
         if (rankMode === 'winRate') {
           if ((b.winRate || 0) !== (a.winRate || 0)) {
@@ -51,6 +66,7 @@ Component({
 
       this.setData({
         displayList: sortedList,
+        worstUser,
       })
     },
     switchRankMode(e: any) {

@@ -17,6 +17,8 @@
 
 .panel-banner {
     display: flex;
+    flex-direction: column;
+    gap: 10rpx;
     margin: 4rpx 0 18rpx;
     padding: 10rpx;
     border-radius: 16rpx;
@@ -49,6 +51,81 @@
     color: #17637a;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(232, 247, 255, 0.98) 100%);
     box-shadow: 0 4rpx 12rpx rgba(74, 144, 226, 0.1);
+}
+
+.panel-banner__worst {
+    min-height: 56rpx;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14rpx;
+    padding: 0 18rpx;
+    border-radius: 12rpx;
+    background: rgba(255, 255, 255, 0.62);
+    box-sizing: border-box;
+}
+
+.panel-banner__worst-title {
+    flex-shrink: 0;
+    font-size: 24rpx;
+    font-weight: 700;
+    color: #2f8f5b;
+}
+
+.panel-banner__worst-user {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+}
+
+.panel-banner__worst-avatar {
+    width: 36rpx;
+    height: 36rpx;
+    border-radius: 50%;
+    border: 2rpx solid rgba(255, 255, 255, 0.95);
+    flex-shrink: 0;
+}
+
+.panel-banner__worst-name {
+    min-width: 0;
+    font-size: 24rpx;
+    font-weight: 600;
+    color: #2d6f4f;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.panel-banner__worst-metrics {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 18rpx;
+}
+
+.panel-banner__worst-metric {
+    flex-shrink: 0;
+    display: flex;
+    align-items: baseline;
+    gap: 8rpx;
+}
+
+.panel-banner__worst-value {
+    font-size: 24rpx;
+    font-weight: 700;
+    color: #2f8f5b;
+}
+
+.panel-banner__worst-label {
+    font-size: 20rpx;
+    color: #5e8f74;
+}
+
+.panel-banner__worst-empty {
+    font-size: 22rpx;
+    color: #7c8ea5;
 }
 
 @keyframes rotate {

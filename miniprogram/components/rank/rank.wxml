@@ -23,6 +23,26 @@
                     胜率榜
                 </view>
             </view>
+            <view class="panel-banner__worst">
+                <text class="panel-banner__worst-title">全程最菜 🥬  居然是Ta 👉</text>
+                <block wx:if="{{worstUser}}">
+                    <view class="panel-banner__worst-user">
+                        <image class="panel-banner__worst-avatar" src="{{worstUser.avatar}}" mode="aspectFill" />
+                        <text class="panel-banner__worst-name">{{worstUser.username}}</text>
+                    </view>
+                    <view class="panel-banner__worst-metrics">
+                        <view class="panel-banner__worst-metric">
+                            <text class="panel-banner__worst-value">{{worstUser.worstPointsText}}</text>
+                            <text class="panel-banner__worst-label">金币</text>
+                        </view>
+                        <view class="panel-banner__worst-metric">
+                            <text class="panel-banner__worst-value">{{worstUser.worstWinRateText}}</text>
+                            <text class="panel-banner__worst-label">胜率</text>
+                        </view>
+                    </view>
+                </block>
+                <text wx:else class="panel-banner__worst-empty">暂无玩家</text>
+            </view>
         </view>
         <block wx:for="{{displayList}}" wx:key="id">
             <view class="list-item">
