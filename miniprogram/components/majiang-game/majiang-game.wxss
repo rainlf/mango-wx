@@ -41,7 +41,6 @@
 .drawer-header {
     display: flex;
     align-items: flex-start;
-    gap: 20rpx;
     padding: 14rpx 22rpx 12rpx;
     flex-shrink: 0;
 }
@@ -61,6 +60,7 @@
 
 .drawer-close {
     flex-shrink: 0;
+    margin-left: 20rpx;
     padding: 10rpx 18rpx;
     border-radius: 999rpx;
     background: rgba(74, 144, 226, 0.08);
@@ -98,7 +98,6 @@
 .panel-heading {
     display: flex;
     flex-direction: column;
-    gap: 4rpx;
     margin-bottom: 14rpx;
 }
 
@@ -110,7 +109,10 @@
 
 .type-buttons {
     display: flex;
-    gap: 12rpx;
+}
+
+.type-btn + .type-btn {
+    margin-left: 12rpx;
 }
 
 .type-btn {
@@ -138,7 +140,7 @@
 .section-header {
     display: flex;
     align-items: center;
-    gap: 12rpx;
+    flex-wrap: wrap;
 }
 
 .section-title-user {
@@ -170,21 +172,23 @@
 
 .players-grid,
 .all-players-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 12rpx;
+    display: flex;
+    flex-wrap: wrap;
     margin-top: 14rpx;
+    margin-right: -12rpx;
+    margin-bottom: -12rpx;
 }
 
 .players-grid-four {
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    justify-content: flex-start;
 }
 
 .table-players-grid {
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 12rpx;
+    display: flex;
+    flex-wrap: wrap;
     margin-top: 14rpx;
+    margin-right: -12rpx;
+    margin-bottom: -12rpx;
 }
 
 .player-card,
@@ -203,6 +207,9 @@
     box-shadow: 0 6rpx 18rpx rgba(86, 115, 156, 0.06);
     box-sizing: border-box;
     transition: all 0.2s ease;
+    width: calc(25% - 12rpx);
+    margin-right: 12rpx;
+    margin-bottom: 12rpx;
 }
 
 .winner-card.winner-selected {
@@ -330,13 +337,12 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10rpx;
+    flex-wrap: wrap;
 }
 
 .detail-score {
     display: inline-flex;
     align-items: center;
-    gap: 8rpx;
     padding: 8rpx 14rpx;
     border-radius: 999rpx;
     background: linear-gradient(135deg, rgba(255, 248, 220, 0.98) 0%, rgba(255, 238, 196, 0.98) 100%);
@@ -351,6 +357,7 @@
 }
 
 .detail-score-value {
+    margin-left: 8rpx;
     font-size: 30rpx;
     line-height: 1;
     font-weight: 700;
@@ -394,15 +401,18 @@
 .formula-values {
     display: flex;
     align-items: center;
-    gap: 8rpx;
     margin-top: 8rpx;
     flex-wrap: wrap;
+    margin-right: -8rpx;
+    margin-bottom: -8rpx;
 }
 
 .formula-main,
 .formula-result {
     min-width: 48rpx;
     padding: 6rpx 10rpx;
+    margin-right: 8rpx;
+    margin-bottom: 8rpx;
     text-align: center;
     border-radius: 14rpx;
     background: rgba(255, 255, 255, 0.78);
@@ -412,6 +422,8 @@
 }
 
 .formula-sign {
+    margin-right: 8rpx;
+    margin-bottom: 8rpx;
     font-size: 24rpx;
     font-weight: 700;
     color: #8f6a2f;
@@ -436,7 +448,6 @@
 .button-row {
     display: flex;
     align-items: flex-start;
-    gap: 12rpx;
 }
 
 .tag-group,
@@ -444,7 +455,8 @@
     flex: 1;
     display: flex;
     flex-wrap: wrap;
-    gap: 10rpx;
+    margin-right: -10rpx;
+    margin-bottom: -10rpx;
 }
 
 .tag-btn,
@@ -454,6 +466,8 @@
     justify-content: center;
     min-height: 52rpx;
     padding: 0 18rpx;
+    margin-right: 10rpx;
+    margin-bottom: 10rpx;
     border-radius: 14rpx;
     background: linear-gradient(180deg, #f5f8fc 0%, #edf2f8 100%);
     border: 1rpx solid rgba(126, 159, 209, 0.12);
@@ -477,8 +491,12 @@
 
 .action-group {
     display: flex;
-    gap: 10rpx;
+    margin-left: 12rpx;
     padding-top: 2rpx;
+}
+
+.action-btn + .action-btn {
+    margin-left: 10rpx;
 }
 
 .action-btn {
@@ -509,16 +527,18 @@
 .drawer-content-bottom {
     display: flex;
     align-items: center;
-    gap: 20rpx;
     padding: 10rpx 18rpx 8rpx;
     margin: 0 16rpx 0;
     border-radius: 22rpx;
     border: 1rpx solid rgba(126, 159, 209, 0.16);
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(248, 251, 255, 0.96) 100%);
     box-shadow: 0 8rpx 22rpx rgba(62, 91, 135, 0.1);
-    backdrop-filter: blur(8rpx);
     flex-shrink: 0;
     box-sizing: border-box;
+}
+
+.btn + .btn {
+    margin-left: 20rpx;
 }
 
 .btn {
@@ -585,26 +605,31 @@
     position: absolute;
     inset: 0;
     background: rgba(15, 23, 42, 0.42);
-    backdrop-filter: blur(6rpx);
 }
 
 .submit-confirm-dialog {
     position: relative;
     z-index: 1;
     width: 100%;
+    max-width: 680rpx;
+    max-height: calc(100vh - 64rpx);
+    display: flex;
+    flex-direction: column;
     border-radius: 24rpx;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.99) 0%, rgba(247, 250, 255, 0.99) 100%);
     border: 1rpx solid rgba(126, 159, 209, 0.16);
     box-shadow: 0 18rpx 40rpx rgba(49, 68, 92, 0.18);
     padding: 28rpx 24rpx 24rpx;
     box-sizing: border-box;
+    overflow: hidden;
 }
 
 .submit-confirm-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 16rpx;
+    flex-wrap: wrap;
+    flex-shrink: 0;
 }
 
 .submit-confirm-title {
@@ -614,6 +639,7 @@
 }
 
 .submit-confirm-type {
+    margin-left: 16rpx;
     padding: 8rpx 18rpx;
     border-radius: 999rpx;
     background: rgba(74, 144, 226, 0.1);
@@ -622,12 +648,21 @@
     font-weight: 600;
 }
 
-.submit-confirm-section {
+.submit-confirm-body {
+    flex: 1;
+    min-height: 0;
     margin-top: 22rpx;
+}
+
+.submit-confirm-section {
     padding: 20rpx;
     border-radius: 20rpx;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0.96) 0%, rgba(244, 248, 253, 0.96) 100%);
     border: 1rpx solid rgba(126, 159, 209, 0.12);
+}
+
+.submit-confirm-section + .submit-confirm-section {
+    margin-top: 22rpx;
 }
 
 .submit-confirm-section-title {
@@ -641,7 +676,10 @@
 .submit-confirm-list {
     display: flex;
     flex-direction: column;
-    gap: 14rpx;
+}
+
+.submit-confirm-item + .submit-confirm-item {
+    margin-top: 14rpx;
 }
 
 .submit-confirm-item {
@@ -655,7 +693,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 12rpx;
+    flex-wrap: wrap;
 }
 
 .submit-confirm-name {
@@ -685,11 +723,14 @@
 .submit-confirm-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: 12rpx;
+    margin-right: -12rpx;
+    margin-bottom: -12rpx;
 }
 
 .submit-confirm-tag {
     padding: 10rpx 18rpx;
+    margin-right: 12rpx;
+    margin-bottom: 12rpx;
     border-radius: 999rpx;
     background: rgba(255, 183, 77, 0.14);
     color: #9b6916;
@@ -699,8 +740,12 @@
 
 .submit-confirm-actions {
     display: flex;
-    gap: 16rpx;
     margin-top: 24rpx;
+    flex-shrink: 0;
+}
+
+.submit-confirm-btn + .submit-confirm-btn {
+    margin-left: 16rpx;
 }
 
 .submit-confirm-btn {
