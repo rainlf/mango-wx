@@ -106,8 +106,8 @@ page {
   justify-content: flex-start;
   min-height: 0;
   overflow: hidden;
-  /* 给底部悬浮操作栏预留空间，避免内容区在 Skyline 下被遮住。 */
-  padding-bottom: calc(132rpx + env(safe-area-inset-bottom));
+  /* 预留底部栏自身高度，并给中间面板与底部栏之间留出更舒展的间距。 */
+  padding-bottom: 116rpx;
   box-sizing: border-box;
 }
 
@@ -136,6 +136,12 @@ page {
   /* 让内部 scroll-view 能拿到剩余高度，避免在 Skyline 下被算成 auto/0。 */
   height: 0;
   display: block;
+  margin: 10rpx 20rpx 20rpx 20rpx;
+  border-radius: 22rpx;
+  border: 1rpx solid rgba(126, 159, 209, 0.16);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 251, 255, 0.98) 100%);
+  box-shadow: 0 8rpx 22rpx rgba(62, 91, 135, 0.1);
+  box-sizing: border-box;
   overflow: hidden;
 }
 
