@@ -116,7 +116,7 @@ page {
   position: absolute;
   left: 20rpx;
   right: 20rpx;
-  bottom: calc(8rpx + env(safe-area-inset-bottom));
+  bottom: 0;
   width: auto;
   display: flex;
   align-items: center;
