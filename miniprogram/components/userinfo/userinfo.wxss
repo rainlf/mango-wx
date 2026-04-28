@@ -12,6 +12,7 @@
 .settings-btn {
   width: 56rpx;
   height: 56rpx;
+  margin-left: 12rpx;
   border-radius: 16rpx;
   background: linear-gradient(135deg, #eef5ff 0%, #e4efff 100%);
   border: 1rpx solid rgba(74, 144, 226, 0.14);
@@ -32,12 +33,12 @@
 .profile-main {
   display: flex;
   align-items: center;
-  gap: 14rpx;
 }
 
 .avatar-wrap {
   width: 100rpx;
   height: 100rpx;
+  margin-right: 14rpx;
   border-radius: 50%;
   padding: 4rpx;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(228, 239, 255, 0.95) 100%);
@@ -59,15 +60,14 @@
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
-  gap: 14rpx;
   padding-top: 2rpx;
 }
 
 .profile-header {
   display: flex;
   align-items: center;
-  gap: 12rpx;
   min-height: 80rpx;
+  margin-bottom: 14rpx;
 }
 
 .identity-block {
@@ -102,7 +102,6 @@
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  gap: 10rpx;
   flex-shrink: 0;
   box-sizing: border-box;
   box-shadow:
@@ -113,7 +112,6 @@
 .points-meta {
   display: flex;
   align-items: center;
-  gap: 8rpx;
   min-width: 0;
 }
 
@@ -140,6 +138,7 @@
 }
 
 .points-label {
+  margin-left: 8rpx;
   font-size: 25rpx;
   color: #7d6546;
   line-height: 1.15;
@@ -149,6 +148,7 @@
 }
 
 .points {
+  margin-left: 10rpx;
   font-size: 44rpx;
   color: #ff9900;
   font-weight: 700;
@@ -161,8 +161,11 @@
 .stats-panel {
   display: flex;
   align-items: stretch;
-  gap: 10rpx;
   margin-top: 2rpx;
+}
+
+.stat-item + .stat-item {
+  margin-left: 10rpx;
 }
 
 .stat-item {
@@ -174,7 +177,6 @@
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  gap: 6rpx;
   box-sizing: border-box;
   border-radius: 13rpx;
   background: linear-gradient(180deg, #fbfdff 0%, #f1f6fd 100%);
@@ -224,6 +226,7 @@
 }
 
 .stat-value {
+  margin-top: 6rpx;
   font-size: 36rpx;
   font-weight: 700;
   color: #25364e;
