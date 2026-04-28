@@ -60,6 +60,6 @@
     "ignore": [],
     "include": []
   },
-  "renderer": "skyline",
+  "renderer": "webview",
   "componentFramework": "glass-easel"
 }
