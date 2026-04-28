@@ -62,7 +62,7 @@ export const convertUserDTO = (dto: UserDTO): User => {
 export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog => {
   const dtoPlayers = Array.isArray(dto.players) ? dto.players : []
   
-  // 如果不足4人（运动类型等），用空用户补齐
+  // 如果数据异常少于4人，用空用户补齐，避免前端渲染出错
   const emptyUser: User = {
     id: 0, username: '', nickname: '', avatar: '', points: 0,
     totalGames: 0, winCount: 0, winRate: 0, lastTags: [], createdTime: '', updatedTime: '',
@@ -95,16 +95,6 @@ export const convertGameDTO = (dto: GameDTO, currentUserId: number): MajiangLog 
       points: p.final_points,
       tags: p.win_types ? p.win_types.map(wt => wt.name) : [],
     }))
-
-  // 运动类型特殊处理：构建"银行"输家
-  if (dto.type_code === 6 && losers.length === 0 && winners.length > 0) {
-    const totalWinPoints = winners.reduce((sum, w) => sum + w.points, 0)
-    losers.push({
-      user: { ...emptyUser, username: '银行', nickname: '银行' },
-      points: -totalWinPoints,
-      tags: [],
-    })
-  }
 
   // 找到记录者
   // 兼容两种来源：
