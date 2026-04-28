@@ -12,7 +12,6 @@
     position: absolute;
     inset: 0;
     background: rgba(15, 23, 42, 0.45);
-    backdrop-filter: blur(4rpx);
 }
 
 .drawer-content {
@@ -172,6 +171,7 @@
 
 .players-grid,
 .all-players-grid {
+    /* Skyline 下 grid 四列布局不稳定，改用 flex-wrap + 固定百分比宽度。 */
     display: flex;
     flex-wrap: wrap;
     margin-top: 14rpx;
@@ -304,13 +304,10 @@
 .player-avatar {
     width: 76rpx;
     height: 76rpx;
+    margin-bottom: 10rpx;
     border-radius: 50%;
     border: 4rpx solid rgba(255, 255, 255, 0.95);
     box-shadow: 0 6rpx 18rpx rgba(74, 144, 226, 0.12);
-}
-
-.player-avatar {
-    margin-bottom: 10rpx;
 }
 
 .player-name {
@@ -591,6 +588,7 @@
 }
 
 .submit-confirm-overlay {
+    /* 用明确的全屏 fixed 覆盖层，避免确认框在 Skyline 下跑到左上角。 */
     position: fixed;
     top: 0;
     right: 0;
@@ -663,8 +661,7 @@
 }
 
 .submit-confirm-body {
-    /* Skyline 下 scroll-view 用 flex:1 有时会算成 0 高度，导致内容区完全不可见。
-       这里改成明确高度 + max-height 的方式兜底。 */
+    /* Skyline 下弹窗里的 scroll-view 需要明确高度，单纯 flex:1 容易导致内容区不渲染。 */
     width: 100%;
     height: 60vh;
     max-height: 900rpx;

@@ -9,6 +9,7 @@ page {
 }
 
 .page-bg {
+  /* Skyline 下 fixed 背景层更容易和滚动容器发生层级/绘制异常，这里改为 absolute。 */
   position: absolute;
   top: 0;
   left: 0;
@@ -105,11 +106,13 @@ page {
   justify-content: flex-start;
   min-height: 0;
   overflow: hidden;
+  /* 给底部悬浮操作栏预留空间，避免内容区在 Skyline 下被遮住。 */
   padding-bottom: calc(132rpx + env(safe-area-inset-bottom));
   box-sizing: border-box;
 }
 
 .bottom-container {
+  /* 放在页面容器内绝对定位，避免 viewport fixed 在 Skyline 真机上的不稳定表现。 */
   position: absolute;
   left: 20rpx;
   right: 20rpx;
@@ -130,6 +133,7 @@ page {
 .content-panel {
   flex: 1;
   min-height: 0;
+  /* 让内部 scroll-view 能拿到剩余高度，避免在 Skyline 下被算成 auto/0。 */
   height: 0;
   display: block;
   overflow: hidden;
