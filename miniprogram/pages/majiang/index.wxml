@@ -33,6 +33,7 @@
         <rank
           class="content-panel"
           listData="{{rankList}}"
+          isInitialLoading="{{rankLoading}}"
           bind:load="handleRankListLoad"
           bind:clickUserAvatar="handleClickUserAvatar"
         />

@@ -44,6 +44,12 @@
                 <text wx:else class="panel-banner__worst-empty">暂无玩家</text>
             </view>
         </view>
+
+        <view wx:if="{{isInitialLoading && displayList.length === 0}}" class="panel-loading">
+            <view class="loading-spinner panel-loading__spinner"></view>
+            <text class="panel-loading__text">加载中...</text>
+        </view>
+
         <block wx:for="{{displayList}}" wx:key="id">
             <view class="list-item">
                 <!-- 排名徽章 -->

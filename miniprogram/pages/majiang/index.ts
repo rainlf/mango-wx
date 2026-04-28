@@ -7,6 +7,7 @@ Page({
     user: {} as User,
     isRefreshing: false,
     isPageRefreshing: false,
+    rankLoading: false,
     isLoadingMore: false,
     hasMoreData: true,
     currentPage: 0,
@@ -43,7 +44,14 @@ Page({
       console.error('预加载牌桌玩家失败:', err)
     })
     this.fetchUserInfo()
-    this.fetchUserRank()
+    if (this.data.showUserRank) {
+      this.setData({ rankLoading: true })
+    }
+    this.fetchUserRank().finally(() => {
+      if (this.data.rankLoading) {
+        this.setData({ rankLoading: false })
+      }
+    })
   },
 
   onPageRefresh() {
@@ -256,7 +264,10 @@ Page({
   },
 
   refreshRankPanel() {
-    return Promise.allSettled([this.fetchUserInfo(), this.fetchUserRank()])
+    this.setData({ rankLoading: true })
+    return Promise.allSettled([this.fetchUserInfo(), this.fetchUserRank()]).finally(() => {
+      this.setData({ rankLoading: false })
+    })
   },
 
   refreshGameLogPanel() {
@@ -353,6 +364,8 @@ Page({
       historyTitle: '游戏历史',
       historyEmptyText: '',
       historyLoading: false,
+      rankLoading: true,
+      rankList: [],
       currentUserId: 0,
       currentPage: 0,
       hasMoreData: true,

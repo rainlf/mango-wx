@@ -4,6 +4,10 @@ Component({
       type: Array,
       value: [],
     },
+    isInitialLoading: {
+      type: Boolean,
+      value: false,
+    },
   },
 
   data: {
